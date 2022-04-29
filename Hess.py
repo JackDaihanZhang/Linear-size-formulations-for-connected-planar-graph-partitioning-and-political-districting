@@ -1,9 +1,10 @@
+# Source: https://github.com/hamidrezavalidi/Political-Districting-to-Minimize-Cut-Edges/blob/master/src/hess.py
+
 import gurobipy as gp
 import networkx as nx
 from gurobipy import GRB
 import read
 
-# Source: https://github.com/hamidrezavalidi/Political-Districting-to-Minimize-Cut-Edges/blob/master/src/hess.py
 def add_base_constraints(m, population, L, U, k):
     DG = m._DG
     # Each vertex i assigned to one district
