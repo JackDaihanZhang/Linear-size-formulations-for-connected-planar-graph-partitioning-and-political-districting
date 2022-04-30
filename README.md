@@ -6,7 +6,7 @@ Motivated by applications in political redistricting, we propose a linear size a
 
 <div style="width: 10%; height: 10%">
   
-![](readme_images/input_graph.png "Input graph")
-![](readme_images/spanning_tree.png "A spanning tree")
+![Figure1](readme_images/input_graph.png "Input graph")
+![Figure2](readme_images/spanning_tree.png "A spanning tree")
 
 </div>
