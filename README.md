@@ -4,6 +4,9 @@ Code and data for the "A compact and integral model for partitioning planar grap
 
 Motivated by applications in political redistricting, we propose a linear size and compact model for partitioning a planar graph into k partitions. 
 
-![Figure 1](readme_images/input_graph.png?raw=true width="100" "Input graph")
-![Figure 2](readme_images/spanning_tree.png?raw=true width="100" "A spanning tree")
+<div style="width: 60%; height: 60%">
+  
+![Figure 1](readme_images/input_graph.png?raw=true "Input graph")
+![Figure 2](readme_images/spanning_tree.png?raw=true "A spanning tree")
 
+</div>
