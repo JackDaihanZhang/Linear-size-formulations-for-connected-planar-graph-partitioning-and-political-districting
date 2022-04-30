@@ -7,9 +7,7 @@ Motivated by applications in political redistricting, we propose a linear size a
 
   
 ![Figure 1](readme_images/input_graph.png?raw=true "Input graph")
-
 ![Figure 2](readme_images/spanning_tree.png?raw=true "A spanning tree")
-
 ![Figure 2](readme_images/subtrees.png?raw=true "k rooted subtrees")
 
 
