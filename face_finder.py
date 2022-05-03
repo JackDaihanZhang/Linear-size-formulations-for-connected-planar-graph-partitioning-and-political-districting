@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from gerrychain import Graph
 import geopandas as gpd
 
-g = Graph.from_json("C:\Rice\junior\Spring Semester\Research\JSON\County\ME_counties.json")
-df = gpd.read_file("C:/Rice/junior/Spring Semester/Research/County/shape_files/ME_counties.shp")
+g = Graph.from_json("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/dual_graphs/ME_counties.json")
+df = gpd.read_file("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/shape_files/ME_counties.shp")
 print(len(g.nodes),'nodes')
 print(len(g.edges),'edges')
 centroids = df.centroid
@@ -30,7 +30,8 @@ def compute_rotation_system(graph):
     #Graph nodes must have "pos"
     #The rotation system is  clockwise (0,2) -> (1,1) -> (0,0) around (0,1)
     for v in graph.nodes():
-        graph.nodes[v]["pos"] = np.array(graph.nodes[v]["pos"])
+        graph.nodes[v]["pos"] = np.array(pos[v])
+        #graph.nodes[v]["pos"] = np.array(graph.nodes[v]["pos"])
     
     for v in graph.nodes():
         locations = []
@@ -247,9 +248,9 @@ def restricted_planar_dual(graph):
                 if face != face2 and (dual_graph.nodes[face]["label"] < dual_graph.nodes[face2]["label"]):
                     if (e[0] in face) and (e[1] in face) and (e[0] in face2) and (e[1] in face2):
                         dual_graph.add_edge(face, face2)
-                        print(e[0], e[1], " and ", dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"])
+                        #print(e[0], e[1], " and ", dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"])
                         primal_dual_pair.append([[e[0],e[1]],[dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"]]])
-    outer = len(dual.nodes)
+    outer = len(dual_graph.nodes)
     for edge in graph.edges:
         if g.nodes[edge[0]]["boundary_node"] and g.nodes[edge[1]]["boundary_node"]:
             face_counter = 0
@@ -261,14 +262,15 @@ def restricted_planar_dual(graph):
                 for face in graph.graph["faces"]:
                     if (edge[0] in face) and (edge[1] in face):
                         # if dual_graph.nodes[face]["label"] <= dual_graph.nodes[face2]["label"]:
-                        print(edge[0], edge[1], " and ", dual.nodes[face]["label"], outer)
+                        #print(edge[0], edge[1], " and ", dual.nodes[face]["label"], outer)
                         counter += 1
-                        primal_dual_pair.append([[edge[0],edge[1]],[dual.nodes[face]["label"],outer]])
+                        primal_dual_pair.append([[edge[0],edge[1]],[dual_graph.nodes[face]["label"],outer]])
             if face_counter == 0:
-                print(edge[0], edge[1], " and ", outer, outer)
+                #print(edge[0], edge[1], " and ", outer, outer)
                 counter += 1
                 primal_dual_pair.append([[edge[0], edge[1]], [outer, outer]])
-    return [dual_graph, primal_dual_pair]
+    print("primal_dual_pair: ", primal_dual_pair)            
+    return dual_graph, primal_dual_pair
 
 
 
@@ -279,20 +281,22 @@ def draw_with_location(graph,c='k',ns=100,w=3,ec='b'):
     nx.draw(graph, pos=nx.get_node_attributes(graph, 'pos'), node_size = ns, width = w, node_color=c,edge_color=ec)
 
 
-graph = compute_rotation_system(g)
-graph = compute_face_data(graph) 
+#graph = compute_rotation_system(g)
+#graph = compute_face_data(graph) 
 
-dual = restricted_planar_dual(graph)
-plt.figure()
-draw_with_location(graph,'b',50,1,'b')
-draw_with_location(dual,'r',50,1,'r')
-plt.show()
+#dual = restricted_planar_dual(graph)
+#plt.figure()
+#draw_with_location(graph,'b',50,1,'b')
+#draw_with_location(dual,'r',50,1,'r')
+#plt.show()
 
 #print("start print edges")
 
 
 
 #print("finish print edges")
+
+"""
 
 # label of outer face
 outer = len(dual.nodes)
@@ -336,3 +340,4 @@ print(len(dual.edges),'edges')
 ##
 #dual = restricted_planar_dual(graph)
 #draw_with_location(dual)
+"""

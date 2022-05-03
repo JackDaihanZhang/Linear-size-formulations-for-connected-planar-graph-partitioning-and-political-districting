@@ -24,7 +24,7 @@ def write_to_csv(state_rows, state_results, filename, fields):
         row.append(bound)
         rows.append(row)
 
-    with open(filename, 'w') as csvfile:
+    with open(filename, 'w', newline='') as csvfile:
         # creating a csv writer object
         csvwriter = csv.writer(csvfile)
 
@@ -82,12 +82,12 @@ def run_Hess(state):
 ###########################
 state_results = []
 # Specify the model
-model = "Hess"
+model = "Williams"
 for state in states_rows:
     if model == "Hess":
         result = run_Hess(state)
     else:
         result = run_williams(state)
     state_results.append(result)
-    write_to_txt(result[2],states_rows[state][3], "Experiment_" + model + "/" + state + "_solution.txt", model)
-write_to_csv(states_rows, state_results, "Experiment_" + model + "/" + "result.csv", fields)
+    write_to_txt(result[2],states_rows[state][3], "C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/" + state + "_solution.txt", model)
+write_to_csv(states_rows, state_results, "C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/" + state  + "result.csv", fields)

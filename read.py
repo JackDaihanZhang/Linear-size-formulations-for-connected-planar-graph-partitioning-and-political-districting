@@ -11,7 +11,7 @@ def read_Williams(primal_dual_pairs):
     dual_graph = nx.DiGraph()
     primal_nodes = set([])
     dual_nodes = set([])
-    for i in range(primal_dual_pairs):
+    for i in range(len(primal_dual_pairs)):
         primal_pair = primal_dual_pairs[i][0]
         dual_pair = primal_dual_pairs[i][1]
         primal_edge = []

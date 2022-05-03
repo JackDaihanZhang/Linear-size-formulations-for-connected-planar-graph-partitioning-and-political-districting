@@ -21,12 +21,15 @@ def Williams_model(k, state):
     supervalid = False
 
     # Construct the graphs from JSON file
-    primal_draw = Graph.from_json("C:/Rice/junior/Spring Semester/Research/JSON/County/" + state + "_counties.json")
-    [dual_draw, primal_dual_pairs] = face_finder.restricted_planar_dual(primal_draw)
+    primal_draw = Graph.from_json("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/dual_graphs/" + state + "_counties.json")
+    dual_draw, primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw)
 
-    [primal_graph, dual_graph, primal_nodes, dual_nodes, primal_roots, dual_roots] = read.read_williams(primal_dual_pairs)
-    primal_edges = primal_draw.edges
-    dual_edges = dual_draw.edges
+    [primal_graph, dual_graph, primal_nodes, dual_nodes, primal_roots, dual_roots] = read.read_Williams(primal_dual_pairs)
+    primal_edges = []
+    dual_edges = []
+    for pair in primal_dual_pairs:
+        primal_edges.append(pair[0])
+        dual_edges.append(pair[1])
     tree_nodes = primal_draw.nodes
     #[primal_draw, dual_draw, primal_edges, dual_edges, tree_nodes] = read.read_draw(primal, dual)
 
@@ -188,9 +191,10 @@ def subgraph_division(m, primal_graph, primal_nodes, primal_dual_pairs, k):
 def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k):
     # L is the lower bound of each node's population, and U is the upper bound
     total_pop = sum(p)
-    L = (total_pop/k)*(0.0995)
+    L = (total_pop/k)*(0.995)
     U = (total_pop/k)*(1.005)
     out_edges = {}
+    print(primal_edges)
     for edge in primal_graph.edges:
         true_edge = primal_edges[edge[0]]
         if int(edge[1]) == true_edge[0]:
@@ -214,8 +218,8 @@ def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, a
     m.addConstrs(m._g[node] - m._r[node]*L >= 0 for node in primal_nodes)
     m.addConstrs(m._g[node] - m._r[node]*U <= 0 for node in primal_nodes)
     m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
-                  gp.quicksum(m._f[out_edge] for out_edge in out_edges[node]) - p[node] == 0 for node in primal_nodes)
-    m.addConstrs(m._f[edge] <= m._x[edge] * (U - p[head_node]) for head_node in out_edges.keys() for edge in out_edges[head_node])
+                  gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - p[node] == 0 for node in primal_nodes)
+    m.addConstrs(m._f[edge] <= m._x[edge] * (U - p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
 
     m.update()
     m.display()
