@@ -71,7 +71,7 @@ fields = ["State", "Primal Vertices", "Dual Vertices", "Edges", "Districts", "Ru
 def run_williams(state):
     num_district = states_rows[state][3]
     face_txt = "Faces/" + state + "_faces.txt"
-    return Williams_model(face_txt, num_district, state)
+    return Williams_model(num_district, state)
 
 ###########################
 # Run An Instance using Hess' model
@@ -100,7 +100,7 @@ write_to_csv(states_rows, state_results, "Experiment_" + model + "/" + "result.c
 ###########################
 # Williams' model
 ###########################
-def Williams_model(face_txt, k, state):
+def Williams_model(k, state):
     # Do we deal with a forest?
     is_forest = True
     # Is population balance considered?
@@ -173,10 +173,8 @@ def Williams_model(face_txt, k, state):
         p = [primal_draw.nodes[i]['P0010001'] for i in primal_draw.nodes()]
         add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k)
         # L is the lower bound of each node's population, and U is the upper bound (change this later)
-        total_pop = sum(p)
-        L = (total_pop / k) * (0.995)
-        U = (total_pop / k) * (1.005)
 
+    """
     # Add symmetry-breaking constraints here
     if symmetry_break:
         symmetry_break_constraints(m, face_txt, primal_edges, primal_graph)
@@ -188,11 +186,13 @@ def Williams_model(face_txt, k, state):
     m.update()
     m.display()
 
+
     # Add supervalid constraints here
     if supervalid:
         supervalid_constraints(m, face_txt, primal_edges, primal_graph)
     m.update()
     m.display()
+    """
 
     # Optimize model
     m.optimize()
@@ -314,6 +314,7 @@ def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, a
     m.update()
     m.display()
 
+"""
 def symmetry_break_constraints(m, face_txt, primal_edges, primal_graph):
     faces = read_face(face_txt)
     for face in faces:
@@ -329,7 +330,9 @@ def symmetry_break_constraints(m, face_txt, primal_edges, primal_graph):
             if max_index in edge_pair:
                 m.addConstr(gp.quicksum(m._x[edge, list(primal_graph.neighbors(edge))[0]] + m._x[
                     edge, list(primal_graph.neighbors(edge))[1]] for edge in edge_pair) <= 1)
+"""
 
+"""
 def strengthening_constraints(m, p, face_txt, primal_edges, primal_graph, U):
     faces = read_face(face_txt)
     for face in faces:
@@ -344,7 +347,9 @@ def strengthening_constraints(m, p, face_txt, primal_edges, primal_graph, U):
             m.addConstr(gp.quicksum(
                 m._x[edge, list(primal_graph.neighbors(edge))[0]] + m._x[edge, list(primal_graph.neighbors(edge))[1]]
                 for edge in edge_index_list) <= 1)
+"""
 
+"""
 def supervalid_constraints(m, face_txt, primal_edges, primal_graph):
     faces = read_face(face_txt)
     for face in faces:
@@ -373,6 +378,7 @@ def supervalid_constraints(m, face_txt, primal_edges, primal_graph):
             m.addConstr(gp.quicksum(m._w[new_edge_index[i], order_forward[i]] for i in range(len(new_edge_index))) <= 1)
             m.addConstr(gp.quicksum(m._w[new_edge_index[len(new_edge_index) - i - 1], order_backward[i]] for i in
                                     range(len(new_edge_index))) <= 1)
+"""
 
 ###########################
 # Hess' model
