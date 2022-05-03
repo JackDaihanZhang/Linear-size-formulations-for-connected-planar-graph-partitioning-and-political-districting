@@ -4,11 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from gerrychain import Graph
 import geopandas as gpd
-import math
 
-g = Graph.from_json("C:/Users/hamid/Downloads/majority-minority-master/majority-minority-master/samuel_code/county/json/LA_counties.json")
-df = gpd.read_file("C:/Users/hamid/Downloads/majority-minority-master/majority-minority-master/samuel_code/county/shape/LA_counties.shp")
-
+g = Graph.from_json("C:\Rice\junior\Spring Semester\Research\JSON\County\ME_counties.json")
+df = gpd.read_file("C:/Rice/junior/Spring Semester/Research/County/shape_files/ME_counties.shp")
+print(len(g.nodes),'nodes')
+print(len(g.edges),'edges')
 centroids = df.centroid
 c_x = centroids.x
 c_y = centroids.y
@@ -22,34 +22,20 @@ n = len(nlist)
 #if shape:
 pos = {node:(c_x[node],c_y[node]) for node in g.nodes}
 
-#print("positions: ", pos)
-
-#pos = nx.planar_layout(g)
-
 for node in g.nodes():
     g.nodes[node]["pos"] = np.array(pos[node])
-    if g.nodes[node]["NAME20"] == "Camas":
-        g.nodes[node]["pos"] = [-114.80577687,  43.25]
-    if g.nodes[node]["NAME20"] == "Minidoka":
-        g.nodes[node]["pos"] = [-113.9374618, 42.85425972] 
-    if g.nodes[node]["NAME20"] == "Lewis":
-        g.nodes[node]["pos"] = [-116.02632612, 46.33699339]     
-        #print("County is ", g.nodes[node]["NAME20"], " with position ", g.nodes[node]["pos"])
 
 
 def compute_rotation_system(graph):
     #Graph nodes must have "pos"
     #The rotation system is  clockwise (0,2) -> (1,1) -> (0,0) around (0,1)
     for v in graph.nodes():
-        #if v == artificial_martin: continue
         graph.nodes[v]["pos"] = np.array(graph.nodes[v]["pos"])
     
     for v in graph.nodes():
-        #if v == artificial_martin: continue
         locations = []
         neighbor_list = list(graph.neighbors(v))
         for w in neighbor_list:
-            #if w == artificial_martin: continue
             locations.append(graph.nodes[w]["pos"] - graph.nodes[v]["pos"])
         angles = [float(np.arctan2(x[0], x[1])) for x in locations]
         neighbor_list.sort(key=dict(zip(neighbor_list, angles)).get)
@@ -246,10 +232,6 @@ def restricted_planar_dual(graph):
     dual_graph = nx.Graph()
     counter = 0
     for face in graph.graph["faces"]:
-        if face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({34, 35, 15, 19, 20}) or face == frozenset({41, 34, 2, 28}) or face == frozenset({41, 2, 19, 34}) or face == frozenset({19, 34, 35, 20}) or face == frozenset({33, 2, 34, 41}) or face == frozenset({34, 35, 20, 29}) or face == frozenset({34, 35, 20, 15}) or face == frozenset({2, 34, 41, 19, 28}): 
-            print("We found a bad face!")
-            continue
-        print("face: ", face)
         dual_graph.add_node(face)
         location = np.array([0,0]).astype("float64")
         for v in face:
@@ -257,15 +239,36 @@ def restricted_planar_dual(graph):
         dual_graph.nodes[face]["pos"] = location / len(face)
         dual_graph.nodes[face]["label"] = counter
         counter += 1
-    ##handle edges
+    primal_dual_pair = []
+    #handle edges
     for e in graph.edges():
-        for face in dual_graph.nodes():
-            for face2 in dual_graph.nodes():
+        for face in graph.graph["faces"]:
+            for face2 in graph.graph["faces"]:
                 if face != face2 and (dual_graph.nodes[face]["label"] < dual_graph.nodes[face2]["label"]):
                     if (e[0] in face) and (e[1] in face) and (e[0] in face2) and (e[1] in face2):
                         dual_graph.add_edge(face, face2)
                         print(e[0], e[1], " and ", dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"])
-    return dual_graph
+                        primal_dual_pair.append([[e[0],e[1]],[dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"]]])
+    outer = len(dual.nodes)
+    for edge in graph.edges:
+        if g.nodes[edge[0]]["boundary_node"] and g.nodes[edge[1]]["boundary_node"]:
+            face_counter = 0
+            for face0 in graph.graph["faces"]:
+                if edge[0] in face0 and edge[1] in face0:
+                    face_counter += 1
+            if face_counter > 1: continue
+            if face_counter == 1:
+                for face in graph.graph["faces"]:
+                    if (edge[0] in face) and (edge[1] in face):
+                        # if dual_graph.nodes[face]["label"] <= dual_graph.nodes[face2]["label"]:
+                        print(edge[0], edge[1], " and ", dual.nodes[face]["label"], outer)
+                        counter += 1
+                        primal_dual_pair.append([[edge[0],edge[1]],[dual.nodes[face]["label"],outer]])
+            if face_counter == 0:
+                print(edge[0], edge[1], " and ", outer, outer)
+                counter += 1
+                primal_dual_pair.append([[edge[0], edge[1]], [outer, outer]])
+    return [dual_graph, primal_dual_pair]
 
 
 
@@ -280,14 +283,10 @@ graph = compute_rotation_system(g)
 graph = compute_face_data(graph) 
 
 dual = restricted_planar_dual(graph)
-
-#bad_vertex = -1
-#for vertex in dual.nodes():
- #   print("vertex ", vertex, " has degree ", dual.degree[vertex])
-  #  if dual.degree[vertex] == 21: bad_vertex = vertex
-        
-        
-
+plt.figure()
+draw_with_location(graph,'b',50,1,'b')
+draw_with_location(dual,'r',50,1,'r')
+plt.show()
 
 #print("start print edges")
 
@@ -303,12 +302,12 @@ counter = 0
 for edge in graph.edges:
     if g.nodes[edge[0]]["boundary_node"] and g.nodes[edge[1]]["boundary_node"]:
         face_counter = 0
-        for face0 in dual.nodes():
+        for face0 in graph.graph["faces"]:
             if edge[0] in face0 and edge[1] in face0:
                 face_counter += 1
-        if  face_counter > 1: continue 
+        if face_counter > 1: continue
         if face_counter == 1:      
-            for face in dual.nodes():
+            for face in graph.graph["faces"]:
                 if (edge[0] in face) and (edge[1] in face):
                 #if dual_graph.nodes[face]["label"] <= dual_graph.nodes[face2]["label"]:
                     print(edge[0], edge[1], " and ", dual.nodes[face]["label"], outer)
@@ -316,63 +315,10 @@ for edge in graph.edges:
         if face_counter == 0:
             print(edge[0], edge[1], " and ", outer, outer)
             counter += 1            
-#print("# of dual edges added: ", counter)  
+print("# of dual edges added: ", counter)        
 
-# remove extra edges for LA
-for (u,v) in g.edges:
-    if (g.nodes[u]["NAME20"] == "St. Martin" and g.nodes[v]["NAME20"] == "Assumption") or (g.nodes[v]["NAME20"] == "St. Martin" and g.nodes[u]["NAME20"] == "Assumption"): 
-        g.remove_edge(u, v)
-    if (g.nodes[u]["NAME20"] == "St. Martin" and g.nodes[v]["NAME20"] == "St. Mary") or (g.nodes[v]["NAME20"] == "St. Martin" and g.nodes[u]["NAME20"] == "St. Mary"):   
-        g.remove_edge(u, v)
-        
-# add new st martin
-#artificial_martin = len(g.nodes)
-
-#g.add_node(artificial_martin)
-
-#for vertex in g.nodes():
- #   if vertex == artificial_martin: continue
-    #print(g.nodes[vertex]["NAME20"])
-  #  if g.nodes[vertex]["NAME20"] == "St. Mary" or g.nodes[vertex]["NAME20"] == "Assumption":        
-   #     g.add_edge(vertex, artificial_martin)
-
-        
-print("# of primal vertices is: ", len(g.nodes))
-print("# of primal edges is: ", len(g.edges))      
-
-print("# of dual vertices is: ", len(dual.nodes) + 1)
-print("# of dual edges is: ", len(dual.edges)+counter)
-
-print("Euler's check? ", len(g.nodes) + len(dual.nodes) - 1 == len(g.edges))
-
-print("Is the primal graph planar? ", nx.check_planarity(g, counterexample=False)[0])
-
-print("Here are faces: ")
-
-#for u, v in g.edges:
- #   print("Adjacent counties ", g.nodes[u]["NAME20"], ", ", g.nodes[v]["NAME20"])
-
-'''
-k = 7       
-population = [g.nodes[i]['P0010001'] for i in g.nodes()]    
-deviation = 0.01
-L = math.ceil((1-deviation/2)*sum(population)/k)
-U = math.floor((1+deviation/2)*sum(population)/k)
-print("L =",L,", U =",U,", k =",k)
-
-for vertex in dual.nodes():
-    if sum(g.nodes[i]['P0010001'] for i in list(vertex)) > U:
-        print(list(vertex))
-'''
-
-#dual.remove_node(bad_vertex)
-
-plt.figure()
-draw_with_location(graph,'b',50,1,'b')
-draw_with_location(dual,'r',50,1,'r')
-plt.show()
-
-print("Is primal planar? ", list(nx.check_planarity(g, counterexample=True)[1]))
+print(len(dual.nodes),'nodes')
+print(len(dual.edges),'edges')
 ## 
 #m= 3
 #graph = nx.grid_graph([m,m])
