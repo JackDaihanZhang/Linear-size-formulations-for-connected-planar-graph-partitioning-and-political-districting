@@ -1,4 +1,4 @@
-# A compact and integral model for partitioning planar graphs with application in political redistricting
+# A linear-size and integral model for partitioning planar graphs with application in political redistricting
 
 Code and data for the "A compact and integral model for partitioning planar graphs with application in political redistricting" by Jack Zhang, Hamidreza Validi, Austin Buchanan, and Illya V. Hicks.
 
