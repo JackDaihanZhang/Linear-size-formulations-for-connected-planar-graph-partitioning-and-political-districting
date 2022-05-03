@@ -1,10 +1,9 @@
-# Source: https://github.com/hamidrezavalidi/Political-Districting-to-Minimize-Cut-Edges/blob/master/src/hess.py
-
 import gurobipy as gp
 import networkx as nx
 from gurobipy import GRB
-import read
+from gerrychain import Graph
 
+# Source: https://github.com/hamidrezavalidi/Political-Districting-to-Minimize-Cut-Edges/blob/master/src/hess.py
 def add_base_constraints(m, population, L, U, k):
     DG = m._DG
     # Each vertex i assigned to one district
@@ -51,35 +50,44 @@ def add_shir_constraints(m):
 def most_possible_nodes_in_one_district(population, U):
     cumulative_population = 0
     num_nodes = 0
-    for ipopulation in sorted(population.values()):
+    for ipopulation in sorted(population):
         cumulative_population += ipopulation
         num_nodes += 1
         if cumulative_population > U:
             return num_nodes - 1
 
 def add_objective(m, G):
+    # Create the distance file
+    D = {}
+    for i in G.nodes:
+        D[i] =  nx.shortest_path_length(G, source=i)
     # Y[i,j] = 1 if edge {i,j} is cut
-    m._Y = m.addVars(G.edges, vtype=GRB.BINARY)
-    m.addConstrs( m._X[i,v]-m._X[j,v] <= m._Y[i,j] for i,j in G.edges for v in G.nodes)
-    m.setObjective(gp.quicksum(m._Y), GRB.MINIMIZE)
+    # m._Y = m.addVars(G.edges, vtype=GRB.BINARY)
+    # m.addConstrs( m._X[i,v]-m._X[j,v] <= m._Y[i,j] for i,j in G.edges for v in G.nodes)
+    # m.setObjective(gp.quicksum(m._Y), GRB.MINIMIZE)
+    m.setObjective(gp.quicksum(gp.quicksum(m._population[i]*D[i][j]*m._X[i,j] for j in G.nodes) for i in G.nodes), GRB.MINIMIZE)
 
-def Hess(state, L, U, k, population):
+
+def Hess_model(state, k):
     ############################
     # Build base model
     ############################
-    G = read.read_hess("Primal_Lorenzo/" + state + "_primal.txt")
+    G = Graph.from_json("C:/Rice/junior/Spring Semester/Research/JSON/County/"+state+"_counties.json")
+    population = [G.nodes[i]['P0010001'] for i in G.nodes()]
+    total_pop = sum(population)
+    U = 1.005*(total_pop/k)
+    L = 0.995*(total_pop/k)
     DG = nx.DiGraph(G)
     m = gp.Model()
     m._DG = DG
-    m._population = population
     m._U = U
+    m._population = population
     # Set a time limit
     m.setParam('TimeLimit', 3600)
 
     # X[i,j]=1 if vertex i is assigned to (district centered at) vertex j
     m._X = m.addVars(DG.nodes, DG.nodes, vtype=GRB.BINARY)
     add_base_constraints(m, population, L, U, k)
-    # Need to add extended objective?
     add_objective(m, G)
     add_shir_constraints(m)
     m.update()

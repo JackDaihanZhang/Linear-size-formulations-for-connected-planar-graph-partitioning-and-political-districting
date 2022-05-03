@@ -6,19 +6,16 @@ import csv
 ###########################
 # Read the primal and dual txt file for the main graphs in Williams' model
 ###########################
-def read(primal_txt, dual_txt):
-    primal_file = open(primal_txt, 'r').readlines()
+def read_Williams(primal_dual_pairs):
     primal_graph = nx.DiGraph()
-    dual_file = open(dual_txt, 'r').readlines()
     dual_graph = nx.DiGraph()
     primal_nodes = set([])
     dual_nodes = set([])
-    for i in range(len(primal_file)):
-        primal_str = primal_file[i]
-        dual_str = dual_file[i]
+    for i in range(primal_dual_pairs):
+        primal_pair = primal_dual_pairs[i][0]
+        dual_pair = primal_dual_pairs[i][1]
         primal_edge = []
-        nodes = primal_str.split()
-        for primal_node in nodes:
+        for primal_node in primal_pair:
             primal_edge.append(primal_node)
             primal_nodes.add(primal_node)
         primal_graph.add_node(i)
@@ -26,8 +23,7 @@ def read(primal_txt, dual_txt):
         primal_graph.add_edge(i, primal_edge[1])
         primal_graph.add_edge(i, primal_edge[0])
         dual_edge = []
-        dual_str = dual_str.split()
-        for dual_node in dual_str:
+        for dual_node in dual_pair:
             dual_edge.append(dual_node)
             dual_nodes.add(dual_node)
         dual_graph.add_nodes_from(dual_edge)
@@ -37,14 +33,13 @@ def read(primal_txt, dual_txt):
         if i == 0:
             primal_roots = primal_edge
             dual_roots = dual_edge
-    return [primal_file, dual_file, primal_graph, dual_graph, primal_nodes, dual_nodes, primal_roots, dual_roots]
+    return [primal_graph, dual_graph, primal_nodes, dual_nodes, primal_roots, dual_roots]
 
+"""
 ###########################
 # Read the primal and dual txt file for the graphs used for plotting in Williams' model
 ###########################
-def read_draw(primal_txt, dual_txt):
-    primal_file = open(primal_txt, 'r').readlines()
-    dual_file = open(dual_txt, 'r').readlines()
+def read_draw(primal_dual_pairs):
     primal_edges = []
     dual_edges = []
     tree_nodes = set([])
@@ -68,7 +63,9 @@ def read_draw(primal_txt, dual_txt):
         dual_draw.add_edge(dual_edge[0], dual_edge[1])
 
     return [primal_draw, dual_draw, primal_edges, dual_edges, tree_nodes]
+"""
 
+"""
 ###########################
 # Read the population txt file
 ###########################
@@ -92,7 +89,9 @@ def read_population(population, model):
     if total_pop_added != total_pop:
         print("Population not adding up")
     return pop_dict
+"""
 
+"""
 ###########################
 # Run the distance csv file
 ###########################
@@ -114,7 +113,9 @@ def read_distance(distance_file, primal_graph, primal_edges):
             actual_edge = primal_edges[edge[0]]
             d_dict[edge] = d[actual_edge[0] - 1][actual_edge[1] - 1]
         return d_dict
+"""
 
+"""
 ###########################
 # Read the face file
 ###########################
@@ -133,9 +134,10 @@ def read_face(face_txt):
             face.append(node_strip)
         faces.append(face)
     return faces
+"""
 
 ###########################
-# Run the primal txt file for Hess' model
+# Read the primal txt file for Hess' model
 ###########################
 def read_hess(primal_txt):
     primal_file = open(primal_txt, 'r').readlines()
