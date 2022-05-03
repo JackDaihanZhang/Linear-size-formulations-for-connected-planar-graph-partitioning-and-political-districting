@@ -171,10 +171,10 @@ def Williams_model(population_file, face_txt, k, state):
 
     # add population constraints here
     if is_population_considered and is_forest:
-        p = read_population(population_file, "Williams")
+        p = [primal_draw.nodes[i]['P0010001'] for i in primal_draw.nodes()]
         add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k)
         # L is the lower bound of each node's population, and U is the upper bound (change this later)
-        total_pop = p["total_pop"]
+        total_pop = sum(p)
         L = (total_pop / k) * (0.995)
         U = (total_pop / k) * (1.005)
 
@@ -282,7 +282,7 @@ def subgraph_division(m, primal_graph, primal_nodes, primal_dual_pairs, k):
 
 def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k):
     # L is the lower bound of each node's population, and U is the upper bound
-    total_pop = p["total_pop"]
+    total_pop = sum(p)
     L = (total_pop/k)*(0.0995)
     U = (total_pop/k)*(1.005)
     out_edges = {}
@@ -318,7 +318,6 @@ def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, a
 def symmetry_break_constraints(m, face_txt, primal_edges, primal_graph):
     faces = read_face(face_txt)
     for face in faces:
-        edge_face = []
         edge_index_list = []
         for vertex_pair in itertools.combinations(face, 2):
             print("vertex_pair: ", vertex_pair)
@@ -335,7 +334,6 @@ def symmetry_break_constraints(m, face_txt, primal_edges, primal_graph):
 def strengthening_constraints(m, p, face_txt, primal_edges, primal_graph, U):
     faces = read_face(face_txt)
     for face in faces:
-        edge_face = []
         edge_index_list = []
         for vertex_pair in itertools.combinations(face, 2):
             print("vertex_pair: ", vertex_pair)
