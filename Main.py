@@ -70,9 +70,8 @@ fields = ["State", "Primal Vertices", "Dual Vertices", "Edges", "Districts", "Ru
 ###########################
 def run_williams(state):
     num_district = states_rows[state][3]
-    population_file = "Population/" + state + "_population.txt"
     face_txt = "Faces/" + state + "_faces.txt"
-    return Williams_model(population_file, face_txt, num_district, state)
+    return Williams_model(face_txt, num_district, state)
 
 ###########################
 # Run An Instance using Hess' model
@@ -101,7 +100,7 @@ write_to_csv(states_rows, state_results, "Experiment_" + model + "/" + "result.c
 ###########################
 # Williams' model
 ###########################
-def Williams_model(population_file, face_txt, k, state):
+def Williams_model(face_txt, k, state):
     # Do we deal with a forest?
     is_forest = True
     # Is population balance considered?
