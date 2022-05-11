@@ -5,27 +5,6 @@ import matplotlib.pyplot as plt
 from gerrychain import Graph
 import geopandas as gpd
 
-#g = Graph.from_json("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/dual_graphs/ME_counties.json")
-#df = gpd.read_file("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/shape_files/ME_counties.shp")
-#print(len(g.nodes),'nodes')
-#print(len(g.edges),'edges')
-#centroids = df.centroid
-#c_x = centroids.x
-#c_y = centroids.y
-#shape = True
-
-#nlist = list(g.nodes())
-#n = len(nlist)
-
-
-#pos = nx.kamada_kawai_layout(g)
-#if shape:
-#pos = {node:(c_x[node],c_y[node]) for node in g.nodes}
-
-#for node in g.nodes():
-#   g.nodes[node]["pos"] = np.array(pos[node])
-
-
 def compute_rotation_system(graph, pos):
     #The rotation system is  clockwise (0,2) -> (1,1) -> (0,0) around (0,1)
     for v in graph.nodes():
@@ -177,7 +156,6 @@ def delete_copies_up_to_permutation(array):
 def face_refine(graph):
     #graph must already have the face data computed
     #this adds a vetex in the middle of each face, and connects that vertex to the edges of that face...
-    
     for face in graph.graph["faces"]:
         graph.add_node(face)
         location = np.array([0,0]).astype("float64")
@@ -225,30 +203,33 @@ def barycentric_subdivision(graph,pos):
     return graph
     
 
-def restricted_planar_dual(graph,df):
+def restricted_planar_dual(graph,df,state):
     centroids = df.centroid
     c_x = centroids.x
     c_y = centroids.y
     pos = {node:(c_x[node],c_y[node]) for node in graph.nodes}
+    
     for node in graph.nodes():
         graph.nodes[node]["pos"] = np.array(pos[node])
-        if graph.nodes[node]["NAME20"] == "Camas":
-            #print("Camas is here!")
-            graph.nodes[node]["pos"] = np.array([-114.80577687,  43.25])
-            #graph.nodes[node]["pos"] = [-1000,  43.25]
-        if graph.nodes[node]["NAME20"] == "Minidoka":
-            #print("Minidoka is here!")
-            graph.nodes[node]["pos"] = np.array([-113.9374618, 42.85425972])
-        if graph.nodes[node]["NAME20"] == "Lewis":
-            #print("Lewis is here!")
-            graph.nodes[node]["pos"] = np.array([-116.32632612, 46.33699339])
+        if state == "ID":
+            # Three nodes in ID's graph is poorly places and results in malformed dual graph, need to manually adjust their position
+            if graph.nodes[node]["NAME20"] == "Camas":
+                #print("Camas is here!")
+                graph.nodes[node]["pos"] = np.array([-114.80577687,  43.25])
+                #graph.nodes[node]["pos"] = [-1000,  43.25]
+            if graph.nodes[node]["NAME20"] == "Minidoka":
+                #print("Minidoka is here!")
+                graph.nodes[node]["pos"] = np.array([-113.9374618, 42.85425972])
+            if graph.nodes[node]["NAME20"] == "Lewis":
+                #print("Lewis is here!")
+                graph.nodes[node]["pos"] = np.array([-116.32632612, 46.33699339])
     #computes dual without unbounded face
     graph = compute_rotation_system(graph, pos)
     graph = compute_face_data(graph)
     dual_graph = nx.Graph()
     counter = 0
     for face in graph.graph["faces"]:
-        if face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({34, 35, 15, 19, 20}) or face == frozenset({41, 34, 2, 28}) or face == frozenset({41, 2, 19, 34}) or face == frozenset({19, 34, 35, 20}) or face == frozenset({33, 2, 34, 41}) or face == frozenset({34, 35, 20, 29}) or face == frozenset({34, 35, 20, 15}) or face == frozenset({2, 34, 41, 19, 28}): 
+        if face == frozenset({3, 4, 7, 8, 12, 13, 19, 21, 24, 28, 29, 30, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 44, 45, 51, 54}) or face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({34, 35, 15, 19, 20}) or face == frozenset({41, 34, 2, 28}) or face == frozenset({41, 2, 19, 34}) or face == frozenset({19, 34, 35, 20}) or face == frozenset({33, 2, 34, 41}) or face == frozenset({34, 35, 20, 29}) or face == frozenset({34, 35, 20, 15}) or face == frozenset({2, 34, 41, 19, 28}): 
             print("We found a bad face!")
             continue
         print("face: ", face)
@@ -272,10 +253,6 @@ def restricted_planar_dual(graph,df):
 
     draw_with_location(graph, df,'b',50,1,'b')
     draw_with_location(dual_graph, df,'r',50,1,'r')
-    #modified_graph = compute_rotation_system(graph, df)
-    #modified_graph = compute_face_data(modified_graph) 
-    #primal_dual_pair = restricted_planar_dual(modified_graph, df)[1]
-    #dual = restricted_planar_dual(modified_graph, df)[0]
     # label of outer face
     outer = len(dual_graph.nodes)
     print("# of dual nodes: ", outer)
@@ -299,8 +276,6 @@ def restricted_planar_dual(graph,df):
                 print(edge[0], edge[1], " and ", outer, outer)
                 counter += 1   
                 primal_dual_pair.append([[edge[0], edge[1]], [outer, outer]])
-                
-    #dual = modify_graphs(graph, df)[0]
     
     # check planarity
     print("# of dual nodes? ", len(dual_graph.nodes))
@@ -308,140 +283,9 @@ def restricted_planar_dual(graph,df):
     print("# of edges? ", len(graph.edges))
     print("Is the input graph planar? ", len(graph.nodes) + len(dual_graph.nodes) - 1 == len(graph.edges))
     
-    plt.figure()
-    #draw_with_location(graph, df,'b',50,1,'b')
-    #draw_with_location(dual_graph, df,'r',50,1,'r')            
-    
+    plt.figure()    
     return dual_graph, primal_dual_pair
 
-'''
-def modify_graphs(graph, df): 
-    centroids = df.centroid
-    c_x = centroids.x
-    c_y = centroids.y
-
-    #Graph nodes must have "pos"
-    pos = {node:(c_x[node],c_y[node]) for node in graph.nodes}
-    #print("Mornnnnnnnning!")
-    for node in graph.nodes():
-        graph.nodes[node]["pos"] = np.array(pos[node])
-        if graph.nodes[node]["NAME20"] == "Camas":
-            print("Camas is here!")
-            graph.nodes[node]["pos"] = [-114.80577687,  43.25]
-            #graph.nodes[node]["pos"] = [-1000,  43.25]
-        if graph.nodes[node]["NAME20"] == "Minidoka":
-            print("Minidoka is here!")
-            graph.nodes[node]["pos"] = [-113.9374618, 42.85425972] 
-        if graph.nodes[node]["NAME20"] == "Lewis":
-            print("Lewis is here!")
-            graph.nodes[node]["pos"] = [-116.02632612, 46.33699339]     
-    
-    #print("Mornnnnnnnning!")
-    
-    modified_graph = compute_rotation_system(graph, df)
-    modified_graph = compute_face_data(modified_graph) 
-    primal_dual_pair = restricted_planar_dual(modified_graph, df)[1]
-    dual = restricted_planar_dual(modified_graph, df)[0]
-    # label of outer face
-    outer = len(dual.nodes)
-    print("# of dual nodes: ", outer)
-    # add edges from the outer face
-    counter = 0
-    for edge in modified_graph.edges:
-        if graph.nodes[edge[0]]["boundary_node"] and graph.nodes[edge[1]]["boundary_node"]:
-            face_counter = 0
-            for face0 in dual.nodes():
-                if edge[0] in face0 and edge[1] in face0:
-                    face_counter += 1
-            if  face_counter > 1: continue 
-            if face_counter == 1:      
-                for face in dual.nodes():
-                    if (edge[0] in face) and (edge[1] in face):
-                    #if dual_graph.nodes[face]["label"] <= dual_graph.nodes[face2]["label"]:
-                        print(edge[0], edge[1], " and ", dual.nodes[face]["label"], outer)
-                        counter += 1
-                        primal_dual_pair.append([[edge[0],edge[1]],[dual.nodes[face]["label"],outer]])
-            if face_counter == 0:
-                print(edge[0], edge[1], " and ", outer, outer)
-                counter += 1   
-                primal_dual_pair.append([[edge[0], edge[1]], [outer, outer]])
-                
-    return dual, primal_dual_pair           
-'''
 def draw_with_location(graph, df,c='k',ns=100,w=3,ec='r'):
 
     nx.draw(graph, pos=nx.get_node_attributes(graph, 'pos'), node_size = ns, width = w, node_color=c,edge_color=ec)
-'''
-def check_planarity(graph, df):
-    dual = modify_graphs(graph, df)[0]
-    
-    # check planarity
-    print("# of dual nodes? ", len(dual.nodes))
-    print("# of primal nodes? ", len(graph.nodes))
-    print("# of edges? ", len(graph.edges))
-    print("Is the input graph planar? ", len(graph.nodes) + len(dual.nodes) - 1 == len(graph.edges))
-    
-    plt.figure()
-    draw_with_location(graph, df,'b',50,1,'b')
-    draw_with_location(dual, df,'r',50,1,'r')
-'''
-#graph = compute_rotation_system(g)
-#graph = compute_face_data(graph) 
-
-#dual = restricted_planar_dual(graph)
-#plt.figure()
-#draw_with_location(graph,'b',50,1,'b')
-#draw_with_location(dual,'r',50,1,'r')
-#plt.show()
-
-#print("start print edges")
-
-
-
-#print("finish print edges")
-
-"""
-
-# label of outer face
-outer = len(dual.nodes)
-
-# add edges from the outer face
-counter = 0
-for edge in graph.edges:
-    if g.nodes[edge[0]]["boundary_node"] and g.nodes[edge[1]]["boundary_node"]:
-        face_counter = 0
-        for face0 in graph.graph["faces"]:
-            if edge[0] in face0 and edge[1] in face0:
-                face_counter += 1
-        if face_counter > 1: continue
-        if face_counter == 1:      
-            for face in graph.graph["faces"]:
-                if (edge[0] in face) and (edge[1] in face):
-                #if dual_graph.nodes[face]["label"] <= dual_graph.nodes[face2]["label"]:
-                    print(edge[0], edge[1], " and ", dual.nodes[face]["label"], outer)
-                    counter += 1
-        if face_counter == 0:
-            print(edge[0], edge[1], " and ", outer, outer)
-            counter += 1            
-print("# of dual edges added: ", counter)        
-
-print(len(dual.nodes),'nodes')
-print(len(dual.edges),'edges')
-## 
-#m= 3
-#graph = nx.grid_graph([m,m])
-#graph.name = "grid_size:" + str(m)
-#for x in graph.nodes():
-#    
-#    graph.node[x]["pos"] = np.array([x[0], x[1]])
-#
-###graph = depth_k_refine(graph,0)
-##graph = depth_k_barycentric(graph, 4)
-#draw_with_location(graph)
-#graph = compute_rotation_system(graph)
-#graph = compute_face_data(graph) 
-##print(len(graph.graph["faces"]))
-##
-#dual = restricted_planar_dual(graph)
-#draw_with_location(dual)
-"""

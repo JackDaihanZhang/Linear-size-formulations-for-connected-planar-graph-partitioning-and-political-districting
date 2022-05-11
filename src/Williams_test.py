@@ -1,7 +1,6 @@
 import gurobipy as gp
 from gurobipy import GRB
 import networkx as nx
-from gerrychain import Graph
 import face_finder
 import read
 
@@ -13,15 +12,9 @@ def Williams_model(k, state,df,p,primal_draw):
     is_population_considered = True
     # Add an objective function to measure compactness?
     add_objective = True
-    # Add symmetry-breaking constraints if it is set to True
-    symmetry_break = False
-    # Add strengthening constraints if it is set to True
-    strengthening = False
-    # Add supervalid cuts if it is set to True
-    supervalid = False
 
     # Construct the graphs from JSON file
-    dual_draw, primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw,df)
+    dual_draw, primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw,df,state)
     
     print("number of crossings:", len(primal_dual_pairs))
     
@@ -42,7 +35,7 @@ def Williams_model(k, state,df,p,primal_draw):
     print("this is the primal root:",primal_root)
     # draw the input primal graph
     print("Here is the input graph: ")
-    nx.draw(primal_draw, with_labels= True)
+    #nx.draw(primal_draw, with_labels= True)
     # plt.show()
 
     # Model
@@ -84,27 +77,6 @@ def Williams_model(k, state,df,p,primal_draw):
     if is_population_considered and is_forest:
         p = [primal_draw.nodes[i]['P0010001'] for i in primal_draw.nodes()]
         add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k)
-        # L is the lower bound of each node's population, and U is the upper bound (change this later)
-
-    """
-    # Add symmetry-breaking constraints here
-    if symmetry_break:
-        symmetry_break_constraints(m, face_txt, primal_edges, primal_graph)
-    m.update()
-    m.display()
-
-    if strengthening:
-        strengthening_constraints(m, p, face_txt, primal_edges, primal_graph, U)
-    m.update()
-    m.display()
-
-
-    # Add supervalid constraints here
-    if supervalid:
-        supervalid_constraints(m, face_txt, primal_edges, primal_graph)
-    m.update()
-    m.display()
-    """
 
     # Optimize model
     m.optimize()
@@ -117,10 +89,7 @@ def Williams_model(k, state,df,p,primal_draw):
         for primal_edge in primal_graph.edges:
             if m._w[primal_edge].X > 0.5:
                 spanning_tree_edges.append(tuple(primal_edges[primal_edge[0]]))
-        spanning_tree = primal_draw.edge_subgraph(spanning_tree_edges)
         print("# of selected edges in the spanning tree: ", len(spanning_tree_edges))
-        nx.draw(spanning_tree, with_labels = True)
-        # plt.show()
         for dual_edge in dual_graph.edges:
             if m._w_prime[dual_edge].X > 0.5:
                 print("dual edge in the dual tree: ", dual_edge)
@@ -137,8 +106,6 @@ def Williams_model(k, state,df,p,primal_draw):
             for node in forest.nodes():
                 forest.nodes[node]["pos"]=primal_draw.nodes[node]["pos"]
             forest.add_edges_from(forest_edges)
-            nx.draw(forest, with_labels = True)
-            # plt.show()
             undirected_forest = forest.to_undirected()
             print("Number of connected components:")
             num = len(list(nx.connected_components(undirected_forest)))
@@ -227,70 +194,3 @@ def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, a
     m.addConstrs(m._f[edge] <= m._x[edge] * (U - p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
 
     m.update()
-    #m.display()
-
-"""
-def symmetry_break_constraints(m, face_txt, primal_edges, primal_graph):
-    faces = read_face(face_txt)
-    for face in faces:
-        edge_index_list = []
-        for vertex_pair in itertools.combinations(face, 2):
-            print("vertex_pair: ", vertex_pair)
-            list_pair = []
-            list_pair.append(min(int(vertex_pair[0]), int(vertex_pair[1])))
-            list_pair.append(max(int(vertex_pair[0]), int(vertex_pair[1])))
-            edge_index_list.append(primal_edges.index(list_pair))
-        max_index = max(edge_index_list)
-        for edge_pair in itertools.combinations(edge_index_list, 2):
-            if max_index in edge_pair:
-                m.addConstr(gp.quicksum(m._x[edge, list(primal_graph.neighbors(edge))[0]] + m._x[
-                    edge, list(primal_graph.neighbors(edge))[1]] for edge in edge_pair) <= 1)
-"""
-
-"""
-def strengthening_constraints(m, p, face_txt, primal_edges, primal_graph, U):
-    faces = read_face(face_txt)
-    for face in faces:
-        edge_index_list = []
-        for vertex_pair in itertools.combinations(face, 2):
-            print("vertex_pair: ", vertex_pair)
-            list_pair = []
-            list_pair.append(min(int(vertex_pair[0]), int(vertex_pair[1])))
-            list_pair.append(max(int(vertex_pair[0]), int(vertex_pair[1])))
-            edge_index_list.append(primal_edges.index(list_pair))
-        if sum(p[node] for node in face) > U:
-            m.addConstr(gp.quicksum(
-                m._x[edge, list(primal_graph.neighbors(edge))[0]] + m._x[edge, list(primal_graph.neighbors(edge))[1]]
-                for edge in edge_index_list) <= 1)
-"""
-
-"""
-def supervalid_constraints(m, face_txt, primal_edges, primal_graph):
-    faces = read_face(face_txt)
-    for face in faces:
-        edge_index_list = []
-        for vertex_pair in itertools.combinations(face, 2):
-            print("vertex_pair: ", vertex_pair)
-            list_pair = []
-            list_pair.append(min(int(vertex_pair[0]), int(vertex_pair[1])))
-            list_pair.append(max(int(vertex_pair[0]), int(vertex_pair[1])))
-            edge_index_list.append(primal_edges.index(list_pair))
-        # max_index = max(edge_index_list)
-        for edge in edge_index_list:
-            new_edge_index = [primal_edge for primal_edge in edge_index_list if primal_edge != edge]
-            end_nodes = list(primal_graph.neighbors(edge))
-            if end_nodes[0] in list(primal_graph.neighbors(new_edge_index[0])):
-                start_node = end_nodes[0]
-                end_node = end_nodes[1]
-            else:
-                start_node = end_nodes[1]
-                end_node = end_nodes[0]
-            for node in face:
-                if node != start_node and node != end_node:
-                    intermediate_node = node
-            order_forward = [intermediate_node, end_node]
-            order_backward = [intermediate_node, start_node]
-            m.addConstr(gp.quicksum(m._w[new_edge_index[i], order_forward[i]] for i in range(len(new_edge_index))) <= 1)
-            m.addConstr(gp.quicksum(m._w[new_edge_index[len(new_edge_index) - i - 1], order_backward[i]] for i in
-                                    range(len(new_edge_index))) <= 1)
-"""

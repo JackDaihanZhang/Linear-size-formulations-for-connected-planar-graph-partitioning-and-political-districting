@@ -1,7 +1,6 @@
 import gurobipy as gp
 import networkx as nx
 from gurobipy import GRB
-from gerrychain import Graph
 
 # Source: https://github.com/hamidrezavalidi/Political-Districting-to-Minimize-Cut-Edges/blob/master/src/hess.py
 def add_base_constraints(m, population, L, U, k):
@@ -61,10 +60,6 @@ def add_objective(m, G):
     D = {}
     for i in G.nodes:
         D[i] =  nx.shortest_path_length(G, source=i)
-    # Y[i,j] = 1 if edge {i,j} is cut
-    # m._Y = m.addVars(G.edges, vtype=GRB.BINARY)
-    # m.addConstrs( m._X[i,v]-m._X[j,v] <= m._Y[i,j] for i,j in G.edges for v in G.nodes)
-    # m.setObjective(gp.quicksum(m._Y), GRB.MINIMIZE)
     m.setObjective(gp.quicksum(gp.quicksum(m._population[i]*D[i][j]*m._X[i,j] for j in G.nodes) for i in G.nodes), GRB.MINIMIZE)
 
 
