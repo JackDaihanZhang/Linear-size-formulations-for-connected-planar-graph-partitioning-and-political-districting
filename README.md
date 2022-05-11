@@ -11,4 +11,4 @@ Motivated by applications in political redistricting, we propose a linear size a
 
 For New Mexico at the county level, districts obtained by the linear-size formulation are shown below. 
 
-![Figure 1](readme_images/NM_directed.png?raw=true "NM")
+![Figure 1](readme_images/NM_directed.PNG?raw=true "NM")
