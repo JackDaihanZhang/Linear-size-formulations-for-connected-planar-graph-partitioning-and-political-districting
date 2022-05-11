@@ -11,4 +11,4 @@ Motivated by applications in political redistricting, we propose a linear size a
 
 For New Mexico at the county level, districts obtained by the Williams-based model and the Hess-based model are shown below. 
 
-![Figure 1](readme_images/NM_directed.PNG?raw=true "NM")
+![Figure 1](readme_images/NM_Will_Hess?raw=true "NM")
