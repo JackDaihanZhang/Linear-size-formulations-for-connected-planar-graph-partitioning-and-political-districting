@@ -38,10 +38,32 @@ def read_Williams(primal_dual_pairs):
 def read_hess(primal_txt):
     primal_file = open(primal_txt, 'r').readlines()
     primal_graph = nx.Graph()
-    primal_nodes = set([])
     for i in range(len(primal_file)):
         primal_str = primal_file[i]
-        primal_edge = []
         nodes = primal_str.split()
         primal_graph.add_edge(int(nodes[0]), int(nodes[1]))
     return primal_graph
+
+###########################
+# Read the primal and dual txt files for county-level experiments
+###########################
+def read_county_txt(primal_txt, dual_txt, population_txt):
+    primal_file = open(primal_txt, 'r').readlines()
+    dual_file = open(dual_txt, 'r').readlines()
+    population_file = open(population_txt, 'r').readlines()
+    primal_dual_pair = []
+    p = []
+    primal_draw = nx.Graph()
+    for i in range(2, len(primal_file)):
+        primal_edge = primal_file[i].strip("()\n").split(',')
+        dual_edge = dual_file[i].strip("()\n").split(',')
+        for j in range(2):
+            primal_edge[j] = int(primal_edge[j])
+            dual_edge[j] = int(dual_edge[j])
+            primal_draw.add_node(primal_edge[j])
+        primal_dual_pair.append([[primal_edge[0],primal_edge[1]],[dual_edge[0],dual_edge[1]]])
+        primal_draw.add_edge(primal_edge[0], primal_edge[1])
+    for r in range(1,len(population_file)):
+        p.append(int(population_file[r].split(' ')[1]))
+    return primal_draw, primal_dual_pair, p
+        

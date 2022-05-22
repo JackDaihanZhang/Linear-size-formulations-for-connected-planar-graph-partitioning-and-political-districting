@@ -3,9 +3,10 @@ from gurobipy import GRB
 import networkx as nx
 import face_finder
 import read
+import Population_cuts
 
 
-def Williams_model(k, state,df,p,primal_draw):
+def Williams_model(k,state,primal_draw,level,df,primal_dual_pairs,m):
     # Do we deal with a forest?
     is_forest = True
     # Is population balance considered?
@@ -14,38 +15,25 @@ def Williams_model(k, state,df,p,primal_draw):
     add_objective = True
 
     # Construct the graphs from JSON file
-    dual_draw, primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw,df,state)
-    
-    print("number of crossings:", len(primal_dual_pairs))
+    if level == "County":
+        dual_draw, primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw,df,state)
     
     [primal_graph, dual_graph, primal_nodes, dual_nodes, primal_roots, dual_roots] = read.read_Williams(primal_dual_pairs)
+    m._primalgraph = primal_graph
+    m._primaldraw = primal_draw
     primal_edges = []
     dual_edges = []
     for pair in primal_dual_pairs:
         primal_edges.append(pair[0])
         dual_edges.append(pair[1])
     tree_nodes = primal_draw.nodes
-    #[primal_draw, dual_draw, primal_edges, dual_edges, tree_nodes] = read.read_draw(primal, dual)
+    m._primaledges = primal_edges
 
 
     # Pick the roots
     dual_root = dual_roots[0]
     primal_root = primal_roots[0]
-    print("this is the dual root:",dual_root)
-    print("this is the primal root:",primal_root)
-    # draw the input primal graph
-    print("Here is the input graph: ")
-    #nx.draw(primal_draw, with_labels= True)
-    # plt.show()
 
-    # Model
-    m = gp.Model("Williams")
-
-    # Open log file
-    #m.setParam('OutputFlag', 0)
-    m.Params.LogFile = "williams_3"+state
-    #logfile = open('Williams', 'w')
-    #m.Params.LogToConsole = 0
 
     # Create decision variables w
     m._w = m.addVars(primal_graph.edges, vtype = GRB.BINARY, name="w")
@@ -53,11 +41,6 @@ def Williams_model(k, state,df,p,primal_draw):
     # Create decision variables y
     m._w_prime = m.addVars(dual_graph.edges, vtype = GRB.BINARY, name="w_prime")
 
-    #set objective function sense
-    m.modelSense = GRB.MINIMIZE
-
-    # Set a time limit
-    m.setParam('TimeLimit', 3600)
 
     add_regular_constraints(m, primal_dual_pairs, primal_graph, primal_nodes, primal_root, dual_graph, dual_nodes, dual_root)
 
@@ -75,24 +58,30 @@ def Williams_model(k, state,df,p,primal_draw):
 
     # add population constraints here
     if is_population_considered and is_forest:
-        p = [primal_draw.nodes[i]['P0010001'] for i in primal_draw.nodes()]
-        add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k)
-
+        add_population_constraints(m, primal_nodes, primal_graph, primal_edges, add_objective, k)
+         
+        
     # Optimize model
-    m.optimize()
+    m.optimize(m._callback)
+    
+    #m.write("Williams_cut_model.lp")
     run_time = m.Runtime
-    node_count = 0
-    # Print the solution if optimality is achieved
-    if m.status == GRB.OPTIMAL or m.status == 9:
+    # Print the solution if optimality if a feasible solution has been found
+    if m.SolCount > 0:
+        #for vertex in primal_nodes:
+            #print("h value for vertex ", vertex, " is ", m._h[vertex].X)
+        #hval = m.cbGetSolution(m._h)
+        
         spanning_tree_edges = []
         forest_edges = []
         for primal_edge in primal_graph.edges:
             if m._w[primal_edge].X > 0.5:
                 spanning_tree_edges.append(tuple(primal_edges[primal_edge[0]]))
-        print("# of selected edges in the spanning tree: ", len(spanning_tree_edges))
+        '''
         for dual_edge in dual_graph.edges:
             if m._w_prime[dual_edge].X > 0.5:
                 print("dual edge in the dual tree: ", dual_edge)
+        '''
         if is_forest == True:
             for primal_edge in primal_graph.edges:
                 if m._x[primal_edge].X > 0.5:
@@ -103,20 +92,21 @@ def Williams_model(k, state,df,p,primal_draw):
                     forest_edges.append(forest_edge)
             forest = nx.DiGraph()
             forest.add_nodes_from(tree_nodes)
-            for node in forest.nodes():
-                forest.nodes[node]["pos"]=primal_draw.nodes[node]["pos"]
+            if level == "County":
+                for node in forest.nodes():
+                    forest.nodes[node]["pos"]=primal_draw.nodes[node]["pos"]
             forest.add_edges_from(forest_edges)
             undirected_forest = forest.to_undirected()
-            print("Number of connected components:")
-            num = len(list(nx.connected_components(undirected_forest)))
-            print(num)
             node_count = m.NodeCount
-            if m.status == GRB.OPTIMAL:
-                obj_bound = m.objVal
-                obj_val = m.objVal
-            else:
-                obj_bound = m.ObjBound
-                obj_val = m.objVal
+            obj_bound = m.ObjBound
+            obj_val = m.objVal
+    # Make all the solution attributes 0 if no feasible solution is found
+    else:
+        node_count = 0
+        undirected_forest = 0
+        forest = 0
+        obj_val = 0
+        obj_bound = m.ObjBound
     return [run_time, node_count, undirected_forest, forest, obj_val, obj_bound]
 
 
@@ -151,22 +141,27 @@ def subgraph_division(m, primal_graph, primal_nodes, primal_dual_pairs, k):
     m._x = m.addVars(primal_graph.edges, vtype = GRB.BINARY, name="x")
     # Create root variables
     m._r = m.addVars(primal_nodes, name="r")
-    # Constraint 1
+    
+    m._primalnodes = primal_nodes
+   
+    
+    # Set branch priority on root vars
+    for j in primal_nodes:
+        m._r[j].BranchPriority = 1
+    
+        
+    # Coupling constraints
     m.addConstrs(gp.quicksum(m._x[out_edge] for out_edge in primal_graph.out_edges(i))  <= gp.quicksum(m._w[out_edge]
-                                            for out_edge in primal_graph.out_edges(i)) for i in range(len(primal_dual_pairs) - 1))
-    # Constraint 2
+                                            for out_edge in primal_graph.out_edges(i)) for i in range(len(primal_dual_pairs)))
+    # Set number of roots to k
     m.addConstr(gp.quicksum(m._r[node] for node in primal_nodes) == k)
     # Constraint 3
     m.addConstrs(m._r[node] + gp.quicksum(m._x[predecessor, node] for predecessor in primal_graph.predecessors(node)) == 1
                  for node in primal_nodes)
 
-def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, add_objective, k):
-    # L is the lower bound of each node's population, and U is the upper bound
-    total_pop = sum(p)
-    L = (total_pop/k)*(0.995)
-    U = (total_pop/k)*(1.005)
+def add_population_constraints(m, primal_nodes, primal_graph, primal_edges, add_objective, k):
+    # Create a dictionary that stores the outbound edges of every node
     out_edges = {}
-    print(primal_edges)
     for edge in primal_graph.edges:
         true_edge = primal_edges[edge[0]]
         if int(edge[1]) == true_edge[0]:
@@ -177,20 +172,71 @@ def add_population_constraints(m, p, primal_nodes, primal_graph, primal_edges, a
             out_edges[head_node].append(edge)
         else:
             out_edges[head_node] = [edge]
+    m._incident = out_edges
+    if m._populationparam == "flow":
+        #add variables: p is the population variable, g is the generated flow variable, and f is the arc flow variable
+        m._g = m.addVars(primal_nodes, name = 'g')
+        m._f = m.addVars(primal_graph.edges, name = 'f')
+    
+        # Have the option to add an objective function (skipped because we don't have the distance files right now)
+        if add_objective:
+            m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))
+    
+        # add constraints
+        m.addConstrs(m._g[node] - m._r[node]*m._L >= 0 for node in primal_nodes)
+        m.addConstrs(m._g[node] - m._r[node]*m._U <= 0 for node in primal_nodes)
+        m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
+                      gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - m._p[node] == 0 for node in primal_nodes)
+        m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
+    
+    elif m._populationparam == "cuts":
+        
+        m._g = m.addVars(primal_nodes, name = 'g')
+        m._f = m.addVars(primal_graph.edges, name = 'f')
+        
+        if add_objective:
+            m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))
+            
+        m.addConstrs(m._g[node] - m._r[node]*m._L >= 0 for node in primal_nodes)    
+            
+        #m.addConstrs(gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) >= m._r[node]*(m._L - m._p[node]) for node in primal_nodes)    
+        
+        m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
+                      gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - m._p[node] == 0 for node in primal_nodes)
+        m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])        
+        '''
+        M = len(primal_nodes) - m._k
+        
+        m._g = m.addVars(primal_nodes, name = 'g')
+        m._f = m.addVars(primal_graph.edges, name = 'f')
+        
+        m.addConstrs(m._g[node] - m._r[node]*M <= 0 for node in primal_nodes)
+        
+        m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
+                      gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - 1 == 0 for node in primal_nodes)
+        m.addConstrs(m._f[edge] <= m._x[edge] * M for head_node in out_edges.keys() for edge in out_edges[head_node])
+    
+        if add_objective:
+            m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))
+        
+        '''
+        '''
+        m._h = m.addVars(primal_nodes, name = 'h')
+        
+        if add_objective:
+            m.setObjective(gp.quicksum(m._h[vertex] for vertex in primal_nodes))
+        for i in range(len(primal_edges)):
+            real_nodes = primal_edges[i]
+            u = real_nodes[0]
+            v = real_nodes[1]
+            m.addConstr(m._h[u]-m._h[v]+(M+1)*m._x[i,v] <= M)
+            m.addConstr(m._h[v]-m._h[u]+(M+1)*m._x[i,u] <= M)
+        '''
+        #tell Gurobi that we will be adding (lazy) constraints
+        m.Params.lazyConstraints = 1
 
-    # add variables: p is the population variable, g is the generated flow variable, and f is the arc flow variable
-    m._g = m.addVars(primal_nodes, name = 'g')
-    m._f = m.addVars(primal_graph.edges, name = 'f')
-
-    # Have the option to add an objective function (skipped because we don't have the distance files right now)
-    if add_objective:
-        m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))
-
-    # add constraints
-    m.addConstrs(m._g[node] - m._r[node]*L >= 0 for node in primal_nodes)
-    m.addConstrs(m._g[node] - m._r[node]*U <= 0 for node in primal_nodes)
-    m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
-                  gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - p[node] == 0 for node in primal_nodes)
-    m.addConstrs(m._f[edge] <= m._x[edge] * (U - p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
-
+        # designate the callback routine 
+        m._callback = Population_cuts.rounded_capacity_ineq
+        
+    
     m.update()

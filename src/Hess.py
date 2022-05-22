@@ -3,7 +3,7 @@ import networkx as nx
 from gurobipy import GRB
 
 # Source: https://github.com/hamidrezavalidi/Political-Districting-to-Minimize-Cut-Edges/blob/master/src/hess.py
-def add_base_constraints(m, population, L, U, k):
+def add_base_constraints(m, k):
     DG = m._DG
     # Each vertex i assigned to one district
     m.addConstrs(gp.quicksum(m._X[i, j] for j in DG.nodes) == 1 for i in DG.nodes)
@@ -12,8 +12,8 @@ def add_base_constraints(m, population, L, U, k):
     m.addConstr(gp.quicksum(m._X[j, j] for j in DG.nodes) == k)
 
     # Population balance: population assigned to vertex j should be in [L,U], if j is a center
-    m.addConstrs(gp.quicksum(population[i] * m._X[i, j] for i in DG.nodes) <= U * m._X[j, j] for j in DG.nodes)
-    m.addConstrs(gp.quicksum(population[i] * m._X[i, j] for i in DG.nodes) >= L * m._X[j, j] for j in DG.nodes)
+    m.addConstrs(gp.quicksum(m._p[i] * m._X[i, j] for i in DG.nodes) <= m._U * m._X[j, j] for j in DG.nodes)
+    m.addConstrs(gp.quicksum(m._p[i] * m._X[i, j] for i in DG.nodes) >= m._L * m._X[j, j] for j in DG.nodes)
 
     # Add coupling inequalities for added model strength
     couplingConstrs = m.addConstrs(m._X[i, j] <= m._X[j, j] for i in DG.nodes for j in DG.nodes)
@@ -35,7 +35,7 @@ def add_shir_constraints(m):
     F = m.addVars(DG.nodes, DG.edges, vtype=GRB.CONTINUOUS)
 
     # compute big-M
-    M = most_possible_nodes_in_one_district(m._population, m._U) - 1
+    M = most_possible_nodes_in_one_district(m._p, m._U) - 1
 
     m.addConstrs(gp.quicksum(F[j, u, j] for u in DG.neighbors(j)) == 0 for j in DG.nodes)
     m.addConstrs(
@@ -60,28 +60,20 @@ def add_objective(m, G):
     D = {}
     for i in G.nodes:
         D[i] =  nx.shortest_path_length(G, source=i)
-    m.setObjective(gp.quicksum(gp.quicksum(m._population[i]*D[i][j]*m._X[i,j] for j in G.nodes) for i in G.nodes), GRB.MINIMIZE)
+    m.setObjective(gp.quicksum(gp.quicksum(m._p[i]*D[i][j]*m._X[i,j] for j in G.nodes) for i in G.nodes))
 
 
-def Hess_model(state, G, k):
+def Hess_model(state, G, k, m):
     ############################
     # Build base model
     ############################
-    population = [G.nodes[i]['P0010001'] for i in G.nodes()]
-    total_pop = sum(population)
-    U = 1.005*(total_pop/k)
-    L = 0.995*(total_pop/k)
     DG = nx.DiGraph(G)
-    m = gp.Model()
     m._DG = DG
-    m._U = U
-    m._population = population
-    # Set a time limit
-    m.setParam('TimeLimit', 3600)
+
 
     # X[i,j]=1 if vertex i is assigned to (district centered at) vertex j
     m._X = m.addVars(DG.nodes, DG.nodes, vtype=GRB.BINARY)
-    add_base_constraints(m, population, L, U, k)
+    add_base_constraints(m, k)
     add_objective(m, G)
     add_shir_constraints(m)
     m.update()
@@ -89,8 +81,8 @@ def Hess_model(state, G, k):
     m.optimize()
     run_time = m.Runtime
     node_count = 0
-    # Print the solution if optimality is achieved
-    if m.status == GRB.OPTIMAL or m.status == 9:
+    # Print the solution if optimality if a feasible solution has been found
+    if m.SolCount > 0:
         forests = []
         nodes = [i for i in range(len(G.nodes()))]
         added_nodes = {}
@@ -111,10 +103,11 @@ def Hess_model(state, G, k):
                         added_nodes[j] = k
                         k = k + 1
             node_count = m.NodeCount
-            if m.status == GRB.OPTIMAL:
-                obj_bound = m.objVal
-                obj_val = m.objVal
-            else:
-                obj_bound = m.ObjBound
-                obj_val = m.objVal
+            obj_bound = m.ObjBound
+            obj_val = m.objVal
+    else:
+        node_count = 0
+        forests = 0
+        obj_val = 0
+        obj_bound = m.ObjBound
     return [run_time, node_count, forests, obj_val, obj_bound]

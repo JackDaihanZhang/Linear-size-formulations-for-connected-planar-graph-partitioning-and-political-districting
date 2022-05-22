@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from gerrychain import Graph
 import geopandas as gpd
+from scipy.spatial import Delaunay
 
 def compute_rotation_system(graph, pos):
     #The rotation system is  clockwise (0,2) -> (1,1) -> (0,0) around (0,1)
@@ -230,9 +231,9 @@ def restricted_planar_dual(graph,df,state):
     counter = 0
     for face in graph.graph["faces"]:
         if face == frozenset({3, 4, 7, 8, 12, 13, 19, 21, 24, 28, 29, 30, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 44, 45, 51, 54}) or face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({0, 2, 3, 4, 6, 7, 8, 11, 12, 13, 14, 16, 17, 18, 21, 23, 25, 27, 30, 31, 32, 36, 37, 39, 42}) or face == frozenset({34, 35, 15, 19, 20}) or face == frozenset({41, 34, 2, 28}) or face == frozenset({41, 2, 19, 34}) or face == frozenset({19, 34, 35, 20}) or face == frozenset({33, 2, 34, 41}) or face == frozenset({34, 35, 20, 29}) or face == frozenset({34, 35, 20, 15}) or face == frozenset({2, 34, 41, 19, 28}): 
-            print("We found a bad face!")
+            #print("We found a bad face!")
             continue
-        print("face: ", face)
+        #print("face: ", face)
         dual_graph.add_node(face)
         location = np.array([0,0]).astype("float64")
         for v in face:
@@ -248,14 +249,14 @@ def restricted_planar_dual(graph,df,state):
                 if face != face2 and (dual_graph.nodes[face]["label"] < dual_graph.nodes[face2]["label"]):
                     if (e[0] in face) and (e[1] in face) and (e[0] in face2) and (e[1] in face2):
                         dual_graph.add_edge(face, face2)
-                        print(e[0], e[1], " and ", dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"])
+                        #print(e[0], e[1], " and ", dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"])
                         primal_dual_pair.append([[e[0],e[1]],[dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"]]])
 
     draw_with_location(graph, df,'b',50,1,'b')
     draw_with_location(dual_graph, df,'r',50,1,'r')
     # label of outer face
     outer = len(dual_graph.nodes)
-    print("# of dual nodes: ", outer)
+    #print("# of dual nodes: ", outer)
     # add edges from the outer face
     counter = 0
     for edge in graph.edges:
@@ -269,19 +270,21 @@ def restricted_planar_dual(graph,df,state):
                 for face in dual_graph.nodes():
                     if (edge[0] in face) and (edge[1] in face):
                     #if dual_graph.nodes[face]["label"] <= dual_graph.nodes[face2]["label"]:
-                        print(edge[0], edge[1], " and ", dual_graph.nodes[face]["label"], outer)
+                        #print(edge[0], edge[1], " and ", dual_graph.nodes[face]["label"], outer)
                         counter += 1
                         primal_dual_pair.append([[edge[0],edge[1]],[dual_graph.nodes[face]["label"],outer]])
             if face_counter == 0:
-                print(edge[0], edge[1], " and ", outer, outer)
+                #print(edge[0], edge[1], " and ", outer, outer)
                 counter += 1   
                 primal_dual_pair.append([[edge[0], edge[1]], [outer, outer]])
     
     # check planarity
+    '''
     print("# of dual nodes? ", len(dual_graph.nodes))
     print("# of primal nodes? ", len(graph.nodes))
     print("# of edges? ", len(graph.edges))
     print("Is the input graph planar? ", len(graph.nodes) + len(dual_graph.nodes) - 1 == len(graph.edges))
+    '''
     
     plt.figure()    
     return dual_graph, primal_dual_pair
