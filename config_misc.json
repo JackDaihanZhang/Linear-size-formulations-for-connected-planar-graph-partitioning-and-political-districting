@@ -1,0 +1,177 @@
+{
+    "run2": {
+        "state": "AR",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": true
+    },
+    "run3": {
+        "state": "IA",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": true
+    },
+    "run4": {
+        "state": "KS",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": true
+    },
+    "run5": {
+        "state": "ME",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "County",
+	"heuristic": true
+    },
+    "run6": {
+        "state": "MS",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": true
+    },
+    "run7": {
+        "state": "NE",
+        "model": "Williams_flow",
+        "num_district": 3,
+	"level": "County",
+	"heuristic": true
+    },
+    "run8": {
+        "state": "NM",
+        "model": "Williams_flow",
+        "num_district": 3,
+	"level": "County",
+	"heuristic": true
+    },
+    "run9": {
+        "state": "WV",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "County",
+	"heuristic": true
+    },
+    "run10": {
+        "state": "ID",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "County",
+	"heuristic": true
+    },
+    "run11": {
+        "state": "AL",
+        "model": "Williams_flow",
+        "num_district": 7,
+	"level": "County",
+	"heuristic": false
+    },
+    "run12": {
+        "state": "AR",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": false
+    },
+    "run13": {
+        "state": "IA",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": false
+    },
+    "run14": {
+        "state": "KS",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": false
+    },
+    "run15": {
+        "state": "ME",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "County",
+	"heuristic": false
+    },
+    "run16": {
+        "state": "MS",
+        "model": "Williams_flow",
+        "num_district": 4,
+	"level": "County",
+	"heuristic": false
+    },
+    "run17": {
+        "state": "NE",
+        "model": "Williams_flow",
+        "num_district": 3,
+	"level": "County",
+	"heuristic": false
+    },
+    "run18": {
+        "state": "NM",
+        "model": "Williams_flow",
+        "num_district": 3,
+	"level": "County",
+	"heuristic": false
+    },
+    "run19": {
+        "state": "WV",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "County",
+	"heuristic": false
+    },
+    "run20": {
+        "state": "ID",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "County",
+	"heuristic": false
+    },
+    "run21": {
+        "state": "ME",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "Tract",
+	"heuristic": true
+    },
+    "run22": {
+        "state": "ID",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "Tract",
+	"heuristic": true
+    },
+    "run23": {
+        "state": "NH",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "Tract",
+	"heuristic": true
+    },
+    "run24": {
+        "state": "ME",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "Tract",
+	"heuristic": false
+    },
+    "run25": {
+        "state": "ID",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "Tract",
+	"heuristic": false
+    },
+    "run26": {
+        "state": "NH",
+        "model": "Williams_flow",
+        "num_district": 2,
+	"level": "Tract",
+	"heuristic": false
+    }
+}
