@@ -63,7 +63,7 @@ def add_objective(m, G):
     m.setObjective(gp.quicksum(gp.quicksum(m._p[i]*D[i][j]*m._X[i,j] for j in G.nodes) for i in G.nodes))
 
 
-def Hess_model(state, G, k, m):
+def Hess_model(state, G, m):
     ############################
     # Build base model
     ############################
@@ -73,9 +73,27 @@ def Hess_model(state, G, k, m):
 
     # X[i,j]=1 if vertex i is assigned to (district centered at) vertex j
     m._X = m.addVars(DG.nodes, DG.nodes, vtype=GRB.BINARY)
-    add_base_constraints(m, k)
+    add_base_constraints(m, m._k)
     add_objective(m, G)
     add_shir_constraints(m)
+    
+    ####################################   
+    # Inject heuristic warm start
+    ####################################    
+    if m._heuristic:
+        for district in m._hdistricts:    
+            #p = min([position[v] for v in district])
+            H = G.subgraph(district)
+            min_score = nx.diameter(H) * max(m._p) * len(district)
+            min_root = -1
+            for vertex in H.nodes:
+                length, path = nx.single_source_dijkstra(H, vertex)
+                score = sum(length[node]*m._p[node] for node in H.nodes)
+                if score < min_score:
+                    min_score = score
+                    min_root = vertex
+            for i in district:
+                m._X[i,min_root].start = 1
     m.update()
 
     m.optimize()
@@ -83,6 +101,17 @@ def Hess_model(state, G, k, m):
     node_count = 0
     # Print the solution if optimality if a feasible solution has been found
     if m.SolCount > 0:
+        
+        labels = [ j for j in DG.nodes if m._X[j,j].x > 0.5 ]
+        
+        districts = [ [ i for i in DG.nodes if m._X[i,j].x > 0.5 ] for j in labels]
+        
+        uncolored_tracts = [ [ i for i in DG.nodes if m._X[i,j].x < 0.5 ] for j in labels]
+        
+        print("Districts: ", districts)
+        
+        print("Uncolored_tracts: ", uncolored_tracts)
+        '''
         forests = []
         nodes = [i for i in range(len(G.nodes()))]
         added_nodes = {}
@@ -101,13 +130,14 @@ def Hess_model(state, G, k, m):
                         else:
                             forests.append([j])
                         added_nodes[j] = k
-                        k = k + 1
-            node_count = m.NodeCount
-            obj_bound = m.ObjBound
-            obj_val = m.objVal
+                        k += 1
+        '''                
+        node_count = m.NodeCount
+        obj_bound = m.ObjBound
+        obj_val = m.objVal
     else:
         node_count = 0
-        forests = 0
-        obj_val = 0
+        districts = "N/A"
+        obj_val = "N/A"
         obj_bound = m.ObjBound
-    return [run_time, node_count, forests, obj_val, obj_bound]
+    return [run_time, node_count, districts, obj_val, obj_bound]

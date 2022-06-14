@@ -27,15 +27,21 @@ def rounded_capacity_ineq(m, where):
             real_forest_edges.append(real_forest_edge)
         #print("Number of edges in the real forest",len(real_forest_edges))
         
+        
+        
         #print("number_connected_components(G): ", nx.number_connected_components(m._primaldraw.edge_subgraph( real_forest_edges ))) 
+        #subgraph = m._.edge_subgraph(edges)
         subgraph = nx.Graph(m._primaldraw.edge_subgraph( real_forest_edges ))
         subgraph.add_nodes_from(roots)
         #print("number_connected_components(G): ", nx.number_connected_components(subgraph) )
         #print("Edges in the real forest:", real_forest_edges)
         #print(m._primaledges)
+        #for component in nx.connected_components( subgraph ):
+            #print("Component: ", list(component))
+        
         for component in nx.connected_components( subgraph ):
             
-            component_population = sum( m._p[i] for i in component )
+            component_population = sum( m._p[i] for i in list(component) )
             
             #print("Component: ", component)
             #print("Component population is ", component_population, ", upper bound is ", m._U, " and lower bound is ", m._L)
@@ -51,12 +57,12 @@ def rounded_capacity_ineq(m, where):
                             other_node = real_edge[0]
                         #print("The other node is:", other_node)
                         #print(not other_node in component)
-                        if not other_node in component:
+                        if other_node not in component:
                             cut_edges.append((predecessor,i))
                             #print("Cut edges updated:", cut_edges)
                 m.cbLazy(gp.quicksum(m._x[e] for e in cut_edges) + gp.quicksum(m._r[i] for i in component) >= math.ceil(component_population/m._U))
                 #print(gp.quicksum(m._x[e] for e in cut_edges) + gp.quicksum(m._r[i] for i in component) >= math.ceil(component_population/m._U))
-                #cut_edges = [ (i,j) for (i,j) in m._G.edges if ( i in component) ^ ( j in component ) ]
+                cut_edges = [ (i,j) for (i,j) in m._G.edges if ( i in component) ^ ( j in component ) ]
                 #m.cbLazy( gp.quicksum( m._x[e] for e in cut_edges ) >= 2 * math.ceil( component_demand / m._Q ) )
                 #print("Here is the over-populated component: ", component)
                 #print("An overcut inequality is added for the following cut edges: ", cut_edges)
