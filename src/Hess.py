@@ -16,23 +16,17 @@ def add_base_constraints(m, k):
     m.addConstrs(gp.quicksum(m._p[i] * m._X[i, j] for i in DG.nodes) >= m._L * m._X[j, j] for j in DG.nodes)
 
     # Add coupling inequalities for added model strength
-    couplingConstrs = m.addConstrs(m._X[i, j] <= m._X[j, j] for i in DG.nodes for j in DG.nodes)
-
-    # Make them user cuts
-    for i in DG.nodes:
-        for j in DG.nodes:
-            couplingConstrs[i, j].Lazy = -1
+    m.addConstrs(m._X[i, j] <= m._X[j, j] for i in DG.nodes for j in DG.nodes)
 
     # Set branch priority on center vars
     for j in DG.nodes:
         m._X[j, j].BranchPriority = 1
 
-
 def add_shir_constraints(m):
     DG = m._DG
 
     # F[j,u,v] tells how much flow (from source j) is sent across arc (u,v)
-    F = m.addVars(DG.nodes, DG.edges, vtype=GRB.CONTINUOUS)
+    F = m.addVars(DG.nodes, DG.edges, vtype = GRB.CONTINUOUS)
 
     # compute big-M
     M = most_possible_nodes_in_one_district(m._p, m._U) - 1
@@ -59,20 +53,17 @@ def add_objective(m, G):
     # Create the distance file
     D = {}
     for i in G.nodes:
-        D[i] =  nx.shortest_path_length(G, source=i)
-    m.setObjective(gp.quicksum(gp.quicksum(m._p[i]*D[i][j]*m._X[i,j] for j in G.nodes) for i in G.nodes))
+        D[i] =  nx.shortest_path_length(G, source = i)
+    m.setObjective(gp.quicksum(gp.quicksum(m._p[i]*D[i][j]*m._X[i, j] for j in G.nodes) for i in G.nodes))
 
-
-def Hess_model(state, G, m):
+def Hess_model(m):
     ############################
     # Build base model
     ############################
+    G = m._G
     DG = nx.DiGraph(G)
     m._DG = DG
-
-
-    # X[i,j]=1 if vertex i is assigned to (district centered at) vertex j
-    m._X = m.addVars(DG.nodes, DG.nodes, vtype=GRB.BINARY)
+    m._X = m.addVars(DG.nodes, DG.nodes, vtype = GRB.BINARY)
     add_base_constraints(m, m._k)
     add_objective(m, G)
     add_shir_constraints(m)
@@ -82,7 +73,6 @@ def Hess_model(state, G, m):
     ####################################    
     if m._heuristic:
         for district in m._hdistricts:    
-            #p = min([position[v] for v in district])
             H = G.subgraph(district)
             min_score = nx.diameter(H) * max(m._p) * len(district)
             min_root = -1
@@ -93,45 +83,16 @@ def Hess_model(state, G, m):
                     min_score = score
                     min_root = vertex
             for i in district:
-                m._X[i,min_root].start = 1
+                m._X[i, min_root].start = 1
     m.update()
-
     m.optimize()
     run_time = m.Runtime
     node_count = 0
     # Print the solution if optimality if a feasible solution has been found
     if m.SolCount > 0:
+        labels = [ j for j in DG.nodes if m._X[j, j].x > 0.5 ]
         
-        labels = [ j for j in DG.nodes if m._X[j,j].x > 0.5 ]
-        
-        districts = [ [ i for i in DG.nodes if m._X[i,j].x > 0.5 ] for j in labels]
-        
-        uncolored_tracts = [ [ i for i in DG.nodes if m._X[i,j].x < 0.5 ] for j in labels]
-        
-        print("Districts: ", districts)
-        
-        print("Uncolored_tracts: ", uncolored_tracts)
-        '''
-        forests = []
-        nodes = [i for i in range(len(G.nodes()))]
-        added_nodes = {}
-        k = 0
-        for i in nodes:
-            for j in nodes:
-                if m._X[i,j].X > 0.5:
-                    # It must be the first time node i is being added, while node j, as the root of a district, could
-                    # have already been added
-                    if j in added_nodes:
-                        if i != j:
-                            forests[added_nodes[j]].append(i)
-                    else:
-                        if i != j:
-                            forests.append([i,j])
-                        else:
-                            forests.append([j])
-                        added_nodes[j] = k
-                        k += 1
-        '''                
+        districts = [ [ i for i in DG.nodes if m._X[i, j].x > 0.5 ] for j in labels]             
         node_count = m.NodeCount
         obj_bound = m.ObjBound
         obj_val = m.objVal

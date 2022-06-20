@@ -4,10 +4,12 @@ import networkx as nx
 # Read the primal and dual txt file for the main graphs in Williams' model
 ###########################
 def read_Williams(primal_dual_pairs):
+    # Initiat the graphs and set of nodes for Williams' model
     primal_graph = nx.DiGraph()
     dual_graph = nx.DiGraph()
     primal_nodes = set([])
     dual_nodes = set([])
+    # Iterate through the input to build the graphs and sets of nodes
     for i in range(len(primal_dual_pairs)):
         primal_pair = primal_dual_pairs[i][0]
         dual_pair = primal_dual_pairs[i][1]
@@ -15,7 +17,6 @@ def read_Williams(primal_dual_pairs):
         for primal_node in primal_pair:
             primal_edge.append(primal_node)
             primal_nodes.add(primal_node)
-        primal_graph.add_node(i)
         primal_graph.add_nodes_from(primal_edge)
         primal_graph.add_edge(i, primal_edge[1])
         primal_graph.add_edge(i, primal_edge[0])
@@ -24,9 +25,9 @@ def read_Williams(primal_dual_pairs):
             dual_edge.append(dual_node)
             dual_nodes.add(dual_node)
         dual_graph.add_nodes_from(dual_edge)
-        dual_graph.add_node(i)
         dual_graph.add_edge(i, dual_edge[0])
         dual_graph.add_edge(i, dual_edge[1])
+        # Pick roots for Williams' model
         if i == 0:
             primal_roots = primal_edge
             dual_roots = dual_edge
@@ -47,13 +48,15 @@ def read_hess(primal_txt):
 ###########################
 # Read the primal and dual txt files for county-level experiments
 ###########################
-def read_county_txt(primal_txt, dual_txt, population_txt):
+def read_tract_txt(primal_txt, dual_txt, population_txt):
+    # Open the files
     primal_file = open(primal_txt, 'r').readlines()
     dual_file = open(dual_txt, 'r').readlines()
     population_file = open(population_txt, 'r').readlines()
+    # Initialize the outputs
     primal_dual_pair = []
-    p = []
     primal_draw = nx.Graph()
+    # Iterate through the input primal and dual text files to build the outputs
     for i in range(2, len(primal_file)):
         primal_edge = primal_file[i].strip("()\n").split(',')
         dual_edge = dual_file[i].strip("()\n").split(',')
@@ -61,9 +64,11 @@ def read_county_txt(primal_txt, dual_txt, population_txt):
             primal_edge[j] = int(primal_edge[j])
             dual_edge[j] = int(dual_edge[j])
             primal_draw.add_node(primal_edge[j])
-        primal_dual_pair.append([[primal_edge[0],primal_edge[1]],[dual_edge[0],dual_edge[1]]])
+        primal_dual_pair.append([[primal_edge[0], primal_edge[1]], [dual_edge[0], dual_edge[1]]])
         primal_draw.add_edge(primal_edge[0], primal_edge[1])
-    for r in range(1,len(population_file)):
+    # Construct the list of population for the primal graph
+    p = []
+    for r in range(1, len(population_file)):
         p.append(int(population_file[r].split(' ')[1]))
     return primal_draw, primal_dual_pair, p
         

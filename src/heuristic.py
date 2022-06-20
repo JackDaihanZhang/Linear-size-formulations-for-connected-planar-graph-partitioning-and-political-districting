@@ -9,20 +9,15 @@ iteration_options = { 100 }
 # Imports
 ########################### 
 import networkx as nx 
-
 import time
 import json
 import os
-
 from gerrychain import (GeographicPartition, Graph, MarkovChain, updaters, constraints, accept)
 from gerrychain.tree import recursive_tree_part
 from gerrychain.proposals import recom
 from functools import partial
-
 import geopandas as gpd
 import matplotlib.pyplot as plt
-
-import read
 
 ###########################
 # Hard-coded inputs
@@ -76,18 +71,19 @@ skips = {
 ################################################ 
 
 def export_to_png(G, df, districts, filename):
-    
+    # Initialize all node assignments to -1
     assignment = [ -1 for u in G.nodes ]
-    
+    # Assigning all nodes to their respecitve districts
     for j in range(len(districts)):
         for i in districts[j]:
             geoID = G.nodes[i]["GEOID20"]
             for u in G.nodes:
                 if geoID == df['GEOID20'][u]:
                     assignment[u] = j
-    
+    # Print an error message if not all nodes are assigned to their respecitve districts                
     if min(assignment[v] for v in G.nodes) < 0:
         print("Error: did not assign all nodes in district map png.")
+    # Display the figure
     else:
         df['assignment'] = assignment
         my_fig = df.plot(column='assignment').get_figure()
@@ -100,10 +96,9 @@ def export_to_png(G, df, districts, filename):
 ####################################
 # Function for GerryChain call
 ####################################                       
-
 def run_GerryChain_heuristic(G,population_deviation,k,iterations,p):
     
-    my_updaters = {"population": updaters.Tally('P0010001', alias="population")}
+    my_updaters = {"population": updaters.Tally('P0010001', alias = "population")}
     start = recursive_tree_part(G,range(k),sum(G.nodes[i]['P0010001'] for i in G.nodes())/k,'P0010001', population_deviation/2,1)
     initial_partition = GeographicPartition(G, start, updaters = my_updaters)
     
@@ -134,34 +129,20 @@ def run_GerryChain_heuristic(G,population_deviation,k,iterations,p):
     
     min_map_score = nx.diameter(G)*max(p)*len(G.nodes)
     print("In GerryChain heuristic, current min score is: ",end='')
-    print(min_map_score,",",sep='',end=' ')
+    print(min_map_score,",",sep = '',end = ' ')
     for partition in my_chain:
-        #current_cut_edges = sum(G[i][j]['edge_length'] for i,j in partition["cut_edges"])
-        districts = [[i for i in G.nodes if partition.assignment[i]==j] for j in range(k)]
+        districts = [[i for i in G.nodes if partition.assignment[i] == j] for j in range(k)]
         map_score_sum = 0
         for district in districts:
             H = G.subgraph(district)
-            #scores = { 0 : vertex for vertex in H.nodes }
-            #scores = [0 for vertex in H.nodes]
             min_score = nx.diameter(H) * max(p) * len(H.nodes)
-            #min_root = -1
-            #min_path = []
             for vertex in H.nodes:
                 length, path = nx.single_source_dijkstra(H, vertex)
                 score = sum(length[node]*p[node] for node in H.nodes)
                 if score < min_score:
                     min_score = score
-                    #min_root = vertex
-                    #min_path = path
                     
             map_score_sum += min_score        
-                    
-            #district_subgraph = G.subgraph(district)
-            #district_radius = nx.radius(district_subgraph)
-            #districts_radius_sum += district_radius
-
-        
-        print(map_score_sum,",",sep='',end=' ')
         
         if map_score_sum < min_map_score:
             min_map_score = map_score_sum
@@ -169,8 +150,8 @@ def run_GerryChain_heuristic(G,population_deviation,k,iterations,p):
             best_cut_edges = [(i,j) for (i,j) in partition["cut_edges"]]
         
     
-    print("Best heuristic solution has the minimum map score of =", min_map_score)
-    return ([[i for i in G.nodes if best_partition.assignment[i]==j] for j in range(k)], best_cut_edges, min_map_score)
+    #print("Best heuristic solution has the minimum map score of =", min_map_score)
+    return ([[i for i in G.nodes if best_partition.assignment[i] == j] for j in range(k)], best_cut_edges, min_map_score)
 
 
 ###########################
@@ -184,9 +165,6 @@ for iterations in iteration_options:
 
 # run all settings
 for state in state_codes.keys():
-    #if state not in ["NH", "ID", "ME"]: continue 
-    #if state == "AL" or state == "NM" or state == "NE" or state == "WV" or state == "KS": continue 
-    if state == "AL": continue
     # parameters            
     k = congressional_districts[state]
     deviation = 0.01
@@ -199,41 +177,33 @@ for state in state_codes.keys():
         #   2. are outside our scope (because of size), or
         #   3. gerrychain gets stuck on (infinite loop).
         
-        if (state,level) in skips:
+        if (state, level) in skips:
             continue
         else:
             print("Running GerryChain for " + state + " at " + level + " level.")
         
         # read input graph and shapefile df
+        
         if level == "county":
-            G = Graph.from_json("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/dual_graphs/" + state + "_counties.json")
-            p = [G.nodes[i]['P0010001'] for i in G.nodes()]
-            df = gpd.read_file("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/county/shape_files/"+state+"_counties.shp")
+            suffix = "counties"
         elif level == "tract":
-            G = Graph.from_json("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/tract/dual_graphs/" + state + "_tracts.json")
-            p = [G.nodes[i]['P0010001'] for i in G.nodes()]
-            df = gpd.read_file("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/tract/shape_files/"+state+"_tracts.shp")
-            '''
-            primal_path = "C:/Users/hamid/Downloads/dualization/"+state+"_primalGraph.txt"
-            dual_path = "C:/Users/hamid/Downloads/dualization/"+state+"_dualGraph.txt"
-            population_path = "C:/Users/hamid/Downloads/dualization/"+state+"_population.population"
-            [G,_,p] = read.read_county_txt(primal_path,dual_path,population_path)
-            df = gpd.read_file("C:/Users/hamid/Downloads/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main/data/tract/shape_files/"+state+"_tracts.shp")
-            '''
+            suffix = "tracts"
+        G = Graph.from_json("data/county/dual_graphs/" + state + "_" + suffix + ".json")
+        p = [G.nodes[i]['P0010001'] for i in G.nodes()]
+        df = gpd.read_file("data/county/shape_files/" + state + "_" + suffix + ".shp")
          
         # give each edge a "length" of one
         for i,j in G.edges:
             G[i][j]['edge_length'] = 1
         
-        for iterations in iteration_options:
-        
+        for iterations in iteration_options:       
             # run GerryChain 
             start = time.time()
-            (districts, cut_edges, heur_obj) = run_GerryChain_heuristic(G,deviation,k,iterations,p)
+            (districts, cut_edges, heur_obj) = run_GerryChain_heuristic(G, deviation, k, iterations, p)
             stop = time.time()
             
             # filename for outputs
-            fn = "../heuristic-results/"+str(iterations)+"-iterations/heur_"+state+"_"+level
+            fn = "../heuristic-results/" + str(iterations) + "-iterations/heur_" + state + "_" + level
             
             # draw the solution on a map
             png_fn = fn + ".png"
