@@ -1,0 +1,31 @@
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Downloads\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\A-Compact-and-Integral-Model-for-Partitioning-Planar-Graphs-main\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hamid\Anaconda3\lib\site-packages\geopandas\plotting.py:658: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  fig, ax = plt.subplots(figsize=figsize)
+C:\Users\hamid\Anaconda3\lib\site-packages\geopandas\plotting.py:658: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+  fig, ax = plt.subplots(figsize=figsize)
