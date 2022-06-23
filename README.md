@@ -41,18 +41,32 @@ The config file can specify a batch of runs. A particular run might look like th
 The config.json file might look like this:
 ```
 {
-  "run1": {"state": "ME", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": false, "lp": true},
-  "run2": {"state": "NM", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run3": {"state": "ID", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run4": {"state": "WV", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run5": {"state": "LA", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": false, "lp": true},
-  "run6": {"state": "AL", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run7": {"state": "AR", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run8": {"state": "OK", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run9": {"state": "MS", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run10": {"state": "NE", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run11": {"state": "IA", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true},
-  "run12": {"state": "KS", "level": "county", "base": "hess", "fixing": true, "contiguity": "scf", "symmetry": "default", "extended": true, "order": "B_decreasing", "heuristic": true, "lp": true}
+    "run1": {"state": "AL", "model": "Williams_flow", "num_district": 7, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run2": {"state": "AR", "model": "Williams_flow", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run3": {"state": "IA", "model": "Williams_flow", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run4": {"state": "KS", "model": "Williams_flow", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run5": {"state": "ME", "model": "Williams_flow", "num_district": 2, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run6": {"state": "MS", "model": "Williams_flow", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run7": {"state": "NE", "model": "Williams_flow", "num_district": 3, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run8": {"state": "NM", "model": "Williams_flow", "num_district": 3, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run9": {"state": "WV", "model": "Williams_flow", "num_district": 2, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run10": {"state": "ID", "model": "Williams_flow", "num_district": 2, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run11": {"state": "ME", "model": "Williams_flow", "num_district": 2, "level": "tract", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run12": {"state": "ID", "model": "Williams_flow", "num_district": 2, "level": "tract", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run13": {"state": "NH", "model": "Williams_flow", "num_district": 2, "level": "tract", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run14": {"state": "AL", "model": "Hess", "num_district": 7, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run15": {"state": "AR", "model": "Hess", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run16": {"state": "IA", "model": "Hess", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run17": {"state": "KS", "model": "Hess", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run18": {"state": "ME", "model": "Hess", "num_district": 2, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run19": {"state": "MS", "model": "Hess", "num_district": 4, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run20": {"state": "NE", "model": "Hess", "num_district": 3, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run21": {"state": "NM", "model": "Hess", "num_district": 3, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run22": {"state": "WV", "model": "Hess", "num_district": 2, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run23": {"state": "ID", "model": "Hess", "num_district": 2, "level": "county", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run24": {"state": "ME", "model": "Hess", "num_district": 2, "level": "tract", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run25": {"state": "ID", "model": "Hess", "num_district": 2, "level": "tract", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false},
+    "run26": {"state": "NH", "model": "Hess", "num_district": 2, "level": "tract", "heuristic": false, "heuristic_iter": 100, "RCI": false, "max clique": false}
 }
 ```
 
