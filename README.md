@@ -80,6 +80,6 @@ Generally, each run should pick from the following options:
   * Either treat counties or census tracts as indivisible land units
 * heuristic : {true, false}
   * If true, will use a heuristic MIP warm start obtained from [GerryChain](https://gerrychain.readthedocs.io/en/latest/)
-* heuristic_iter :
+* heuristic_iter : {100}
 * RCI : {true, false}
 * max clique : {true, false}
