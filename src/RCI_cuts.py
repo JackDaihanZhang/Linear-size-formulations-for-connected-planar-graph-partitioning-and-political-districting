@@ -14,13 +14,13 @@ def RCI_inequalities(m, where):
     start = time.time()
     G = m._G
     xval = m.cbGetNodeRel(m._x)
-    rval = m.cbGetNodeRel(m._r)
+    sval = m.cbGetNodeRel(m._s)
     m_rci = gp.Model()   
     m_rci.Params.OutputFlag = 0
     # Set a time limit
     t = m_rci.addVars(G.nodes, vtype = GRB.BINARY, name = 't')
     h = m_rci.addVars(m._primalgraph.edges, vtype = GRB.CONTINUOUS, name = 'h')   
-    m_rci.setObjective(gp.quicksum(xval[e]*h[e] for e in m._primalgraph.edges) + gp.quicksum(rval[i]*t[i] for i in G.nodes) - gp.quicksum(m._p[i]*t[i] for i in G.nodes)/m._U, GRB.MINIMIZE)
+    m_rci.setObjective(gp.quicksum(xval[e]*h[e] for e in m._primalgraph.edges) + gp.quicksum(sval[i]*t[i] for i in G.nodes) - gp.quicksum(m._p[i]*t[i] for i in G.nodes)/m._U, GRB.MINIMIZE)
     
     # Add RCI constraints
     for index in range(len(m._primaledges)):
@@ -42,7 +42,7 @@ def RCI_inequalities(m, where):
     # Retrieve optimization results for lazy cuts
     R = [i for i in G.nodes if t[i].X > 0.5]   
     H_edges = [e for e in m._primalgraph.edges if h[e].X > 0.5]
-    LHS = sum(xval[edge] for edge in H_edges) + sum(rval[i] for i in R) 
+    LHS = sum(xval[edge] for edge in H_edges) + sum(sval[i] for i in R) 
     RHS = math.ceil(sum(m._p[i] for i in R)/m._U)
     
     # Tolerance parameter
@@ -50,6 +50,6 @@ def RCI_inequalities(m, where):
                     
     # Add the cut to Williams's model is the constraint is violated
     if LHS < RHS + epsilon:
-        m.cbLazy(gp.quicksum(m._x[edge] for edge in H_edges) + gp.quicksum(m._r[i] for i in R) >= RHS)
+        m.cbLazy(gp.quicksum(m._x[edge] for edge in H_edges) + gp.quicksum(m._s[i] for i in R) >= RHS)
         m._numLazy += 1
     m._callBackTime += time.time() - start

@@ -2,7 +2,7 @@
 # Run options
 ###########################  
 
-levels = { 'county' }
+levels = { 'tract' }
 iteration_options = { 100 }
 
 ###########################
@@ -128,8 +128,7 @@ def run_GerryChain_heuristic(G,population_deviation,k,iterations,p):
     )
     
     min_map_score = nx.diameter(G)*max(p)*len(G.nodes)
-    print("In GerryChain heuristic, current min score is: ",end='')
-    print(min_map_score,",",sep = '',end = ' ')
+    
     for partition in my_chain:
         districts = [[i for i in G.nodes if partition.assignment[i] == j] for j in range(k)]
         map_score_sum = 0
@@ -159,9 +158,9 @@ def run_GerryChain_heuristic(G,population_deviation,k,iterations,p):
 ###########################  
 
 # create directories for results
-os.mkdir("../heuristic-results")
+os.mkdir("../heuristic-results-100-tract")
 for iterations in iteration_options:
-    os.mkdir("../heuristic-results/"+str(iterations)+"-iterations") 
+    os.mkdir("../heuristic-results-100-tract/"+str(iterations)+"-iterations") 
 
 # run all settings
 for state in state_codes.keys():
@@ -188,9 +187,10 @@ for state in state_codes.keys():
             suffix = "counties"
         elif level == "tract":
             suffix = "tracts"
-        G = Graph.from_json("data/county/dual_graphs/" + state + "_" + suffix + ".json")
+        if state not in ['ME', 'NH', 'ID']: continue    
+        G = Graph.from_json("data/" + level + "/dual_graphs/" + state + "_" + suffix + ".json")
         p = [G.nodes[i]['P0010001'] for i in G.nodes()]
-        df = gpd.read_file("data/county/shape_files/" + state + "_" + suffix + ".shp")
+        df = gpd.read_file("data/" + level + "/shape_files/" + state + "_" + suffix + ".shp")
          
         # give each edge a "length" of one
         for i,j in G.edges:
@@ -203,7 +203,7 @@ for state in state_codes.keys():
             stop = time.time()
             
             # filename for outputs
-            fn = "../heuristic-results/" + str(iterations) + "-iterations/heur_" + state + "_" + level
+            fn = "../heuristic-results-100-tract/" + str(iterations) + "-iterations/heur_" + state + "_" + level
             
             # draw the solution on a map
             png_fn = fn + ".png"

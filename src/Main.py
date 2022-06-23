@@ -7,7 +7,7 @@ import csv
 from csv import DictWriter
 import networkx as nx
 import Hess
-import Williams_test
+import Williams
 import matplotlib.pyplot as plt
 from gerrychain import Graph
 import geopandas as gpd
@@ -73,7 +73,7 @@ number_of_congressional_district = {"AL": 7, "AR": 4, "IA": 4, "KS": 4, "ME": 2,
 # Run An Instance using Williams' model
 #########################################
 def run_williams(m):
-    return Williams_test.Williams_model(m)
+    return Williams.Williams_model(m)
 
 ####################################
 # Run An Instance using Hess' model
@@ -130,7 +130,7 @@ for key in batch_configs.keys():
     heuristic = config['heuristic']
     heuristic_iter = config['heuristic_iter']
     
-    # Read the primal and dual graph from the text files when running Williams moedl on tract level
+    # Read the primal and dual graph from the text files when running Williams model on tract level
     if level == "tract": 
         suffix = "tracts"
     elif level == "county":

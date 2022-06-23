@@ -9,8 +9,8 @@ def rounded_capacity_ineq(m, where):
     if where == GRB.Callback.MIPSOL: 
         # retrieve the LP solution
         xval = m.cbGetSolution(m._x)
-        rval = m.cbGetSolution(m._r)
-        roots = [i for i in m._primalnodes if rval[i] > 0.5]
+        sval = m.cbGetSolution(m._s)
+        roots = [i for i in m._primalnodes if sval[i] > 0.5]
         # which edges in the primal graph are selected?
         forest_edges = [ e for e in m._primalgraph.edges if xval[e] > 0.5 ]
         # which edges in the actual graph (primal_draw) are selected
@@ -38,5 +38,5 @@ def rounded_capacity_ineq(m, where):
                             other_node = real_edge[0]
                         if other_node not in component:
                             cut_edges.append((predecessor,i))
-                m.cbLazy(gp.quicksum(m._x[e] for e in cut_edges) + gp.quicksum(m._r[i] for i in component) >= math.ceil(component_population/m._U))
+                m.cbLazy(gp.quicksum(m._x[e] for e in cut_edges) + gp.quicksum(m._s[i] for i in component) >= math.ceil(component_population/m._U))
                 cut_edges = [ (i,j) for (i,j) in m._G.edges if ( i in component) ^ ( j in component ) ]
