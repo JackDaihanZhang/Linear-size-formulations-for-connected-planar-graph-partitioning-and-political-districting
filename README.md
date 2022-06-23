@@ -22,7 +22,7 @@ The input data is duplicated from [Daryl DeFord's website](https://people.csail.
 You can run the code from command line, like this:
 
 ```
-C:\Cut-Edges\src>python3 main.py config.json 1>>log-file.txt 2>>error-file.txt
+C:\A-Linear-Size-and-Integral-Model-for-Partitioning-Planar-Graphs-main\src>python Main.py config.json 1>>log-file.txt 2>>error-file.txt
 ```
 
 ## config.json
