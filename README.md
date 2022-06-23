@@ -16,7 +16,7 @@ For New Mexico at the county level, districts obtained by the Williams-based mod
 ## Require
 To run the code, you will need installations of [Gurobi](https://www.gurobi.com/) and [GerryChain](https://gerrychain.readthedocs.io/en/latest/).
 
-The input data is duplicated from [Daryl DeFord's website]([https://people.csail.mit.edu/ddeford/dual_graphs.html](https://www.math.wsu.edu/faculty/ddeford/)).
+The input data is duplicated from [Daryl DeFord](https://www.math.wsu.edu/faculty/ddeford/).
 
 ## Run
 You can run the code from command line, like this:
