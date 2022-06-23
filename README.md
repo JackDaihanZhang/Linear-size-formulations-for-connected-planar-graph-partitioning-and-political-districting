@@ -18,8 +18,6 @@ To run the code, you will need installations of [Gurobi](https://www.gurobi.com/
 
 The input data is duplicated from [Daryl DeFord's website](https://people.csail.mit.edu/ddeford/dual_graphs.html).
 
-The shape files used to draw maps are duplicated from [Eugene Lykhovyd's website](https://lykhovyd.com/files/public/districting).
-
 ## Run
 You can run the code from command line, like this:
 
