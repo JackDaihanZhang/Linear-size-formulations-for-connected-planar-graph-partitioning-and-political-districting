@@ -67,7 +67,7 @@ def append_dict_as_row(file_name, dict_of_elem, field_names):
 ###########################
 # Hard-coded inputs
 ###########################
-number_of_congressional_district = {"AL": 7, "AR": 4, "IA": 4, "KS": 4, "ME": 2, "MS": 4, "NE": 3, "NM": 3, "WV": 2, "ID": 2}
+number_of_congressional_district = {"AL": 7, "AR": 4, "IA": 4, "KS": 4, "ME": 2, "MS": 4, "NE": 3, "NM": 3, "WV": 2, "ID": 2, "MT": 2, "NH": 2}
 
 #########################################
 # Run An Instance using Williams' model

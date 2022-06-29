@@ -206,6 +206,12 @@ def restricted_planar_dual(graph,df,state):
                 graph.nodes[node]["pos"] = np.array([-113.9374618, 42.85425972])
             if graph.nodes[node]["NAME20"] == "Lewis":
                 graph.nodes[node]["pos"] = np.array([-116.32632612, 46.33699339])
+        if state == "MT":
+            if graph.nodes[node]["NAME20"] == "Lake":
+                graph.nodes[node]["pos"] = [-114.24938,  47.6459043]
+            if graph.nodes[node]["NAME20"] == "Treasure":
+                graph.nodes[node]["pos"] = [-107.4,  45.9]
+
     #computes dual without unbounded face
     graph = compute_rotation_system(graph, pos)
     graph = compute_face_data(graph)
@@ -229,7 +235,7 @@ def restricted_planar_dual(graph,df,state):
                 if face != face2 and (dual_graph.nodes[face]["label"] < dual_graph.nodes[face2]["label"]):
                     if (e[0] in face) and (e[1] in face) and (e[0] in face2) and (e[1] in face2):
                         dual_graph.add_edge(face, face2)
-                        primal_dual_pair.append([[e[0],e[1]],[dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"]]])
+                        primal_dual_pair.append([[e[0], e[1]], [dual_graph.nodes[face]["label"], dual_graph.nodes[face2]["label"]]])
 
     draw_with_location(graph, df,'b',50,1,'b')
     draw_with_location(dual_graph, df,'r',50,1,'r')
@@ -248,7 +254,7 @@ def restricted_planar_dual(graph,df,state):
                 for face in dual_graph.nodes():
                     if (edge[0] in face) and (edge[1] in face):
                         counter += 1
-                        primal_dual_pair.append([[edge[0],edge[1]], [dual_graph.nodes[face]["label"],outer]])
+                        primal_dual_pair.append([[edge[0], edge[1]], [dual_graph.nodes[face]["label"], outer]])
             if face_counter == 0:
                 counter += 1   
                 primal_dual_pair.append([[edge[0], edge[1]], [outer, outer]])

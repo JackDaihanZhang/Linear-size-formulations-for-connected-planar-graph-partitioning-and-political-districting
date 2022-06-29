@@ -2,7 +2,7 @@
 # Run options
 ###########################  
 
-levels = { 'tract' }
+levels = { 'county', 'tract' }
 iteration_options = { 100 }
 
 ###########################
@@ -62,7 +62,7 @@ skips = {
     ('MD','county'), ('OK','tract'),('OK','county'), ('OH','tract'), ('OH','county'), 
     ('UT','county'), ('MO','tract'), ('MO','county'), ('MN','tract'), ('MN','county'), 
     ('MI','tract'), ('MI','county'), ('RI','tract'), ('RI','county'), ('KS','tract'), 
-    ('MT','tract'), ('MT','county'), ('SC','tract'), ('SC','county'), ('KY','tract'), 
+    ('SC','tract'), ('SC','county'), ('KY','tract'), 
     ('KY','county'), ('OR','tract'), ('OR','county'), ('SD','tract'), ('SD','county')
 }
 
@@ -158,9 +158,9 @@ def run_GerryChain_heuristic(G,population_deviation,k,iterations,p):
 ###########################  
 
 # create directories for results
-os.mkdir("../heuristic-results-100-tract")
+os.mkdir("../heuristic-results")
 for iterations in iteration_options:
-    os.mkdir("../heuristic-results-100-tract/"+str(iterations)+"-iterations") 
+    os.mkdir("../heuristic-results/" + str(iterations)+ "-iterations") 
 
 # run all settings
 for state in state_codes.keys():
@@ -187,7 +187,7 @@ for state in state_codes.keys():
             suffix = "counties"
         elif level == "tract":
             suffix = "tracts"
-        if state not in ['ME', 'NH', 'ID']: continue    
+        if state not in ['MT']: continue    
         G = Graph.from_json("data/" + level + "/dual_graphs/" + state + "_" + suffix + ".json")
         p = [G.nodes[i]['P0010001'] for i in G.nodes()]
         df = gpd.read_file("data/" + level + "/shape_files/" + state + "_" + suffix + ".shp")
@@ -203,7 +203,7 @@ for state in state_codes.keys():
             stop = time.time()
             
             # filename for outputs
-            fn = "../heuristic-results-100-tract/" + str(iterations) + "-iterations/heur_" + state + "_" + level
+            fn = "../heuristic-results/" + str(iterations) + "-iterations/heur_" + state + "_" + level
             
             # draw the solution on a map
             png_fn = fn + ".png"
