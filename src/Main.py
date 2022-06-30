@@ -209,6 +209,12 @@ for key in batch_configs.keys():
         result['heur_iter'] = 'n/a'
         heuristic_label = "wo_heuristic"
     
+    # Create RCI_label for output files naming
+    if RCI:
+        RCI_label = "w_RCI"
+    else:
+        RCI_label = "wo_RCI"
+    
     # Run the instance
     if model == "Hess":
         [run_time, node_count, forest, obj_val, obj_bound] = run_Hess(m)
@@ -249,11 +255,11 @@ for key in batch_configs.keys():
                 for node in forest[i]:
                     assignment[node] = i
         
-        png_filename = path + "/" + state + "_" + model + "_" + level + "_" + heuristic_label + '.png'
+        png_filename = path + "/" + state + "_" + model + "_" + level + "_" + heuristic_label + "_" + RCI_label + '.png'
         export_to_png(m, assignment, png_filename)
         
         # Output an additional arowed map when districted using William's model and on county level
         if level == "county" and ( model == "Williams_cuts" or model == "Williams_flow"):
             face_finder.draw_with_location(directed_forest, df, 'k', 100, 3,'r')
-            arrow_graph_path =  path + "/" + state + "_" + model + "_" + level + "_" + heuristic_label + '_arrows.png'
+            arrow_graph_path =  path + "/" + state + "_" + model + "_" + level + "_" + heuristic_label + "_" + RCI_label + '_arrows.png'
             plt.savefig(arrow_graph_path)
