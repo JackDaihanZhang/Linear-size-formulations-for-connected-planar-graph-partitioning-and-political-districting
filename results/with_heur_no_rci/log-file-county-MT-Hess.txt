@@ -1,0 +1,51 @@
+Here is the config name:  configMT.json
+Reading config from configMT.json
+Set parameter Username
+
+--------------------------------------------
+Warning: your license will expire in 12 days
+--------------------------------------------
+
+Academic license - for non-commercial use only - expires 2022-07-09
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 0
+Solving MT with L = 539402 and U = 544823 at county level under Hess model
+Gurobi Optimizer version 9.5.0 build v9.5.0rc5 (win64)
+Thread count: 4 physical cores, 8 logical processors, using up to 8 threads
+Optimize a model with 9521 rows, 18592 columns and 67600 nonzeros
+Model fingerprint: 0xa0502213
+Variable types: 15456 continuous, 3136 integer (3136 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+05]
+  Objective range  [5e+02, 1e+06]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 2e+00]
+
+Warning: Completing partial solution with 3080 unfixed non-continuous variables out of 3136
+User MIP start produced solution with objective 1.7524e+06 (0.02s)
+Loaded user MIP start with objective 1.7524e+06
+
+Presolve removed 112 rows and 276 columns
+Presolve time: 0.13s
+Presolved: 9409 rows, 18316 columns, 67042 nonzeros
+Variable types: 15180 continuous, 3136 integer (3136 binary)
+
+Root relaxation: objective 1.746940e+06, 1339 iterations, 0.07 seconds (0.06 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1746940.00    0    2 1752398.00 1746940.00  0.31%     -    0s
+H    0     0                    1750471.0000 1746940.00  0.20%     -    0s
+     0     0     cutoff    0      1750471.00 1750471.00  0.00%     -    0s
+
+Cutting planes:
+  Flow path: 1
+
+Explored 1 nodes (1344 simplex iterations) in 0.39 seconds (0.26 work units)
+Thread count was 8 (of 8 available processors)
+
+Solution count 2: 1.75047e+06 1.7524e+06 
+
+Optimal solution found (tolerance 0.00e+00)
+Best objective 1.750471000000e+06, best bound 1.750471000000e+06, gap 0.0000%
