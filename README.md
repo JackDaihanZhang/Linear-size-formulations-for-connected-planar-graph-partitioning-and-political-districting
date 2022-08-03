@@ -1,6 +1,6 @@
-# A linear-size and integral model for partitioning planar graphs with application in political redistricting
+# Linear-size formulations for connected planar graph partitioning and political districting
 
-Code and data for the "A compact and integral model for partitioning planar graphs with application in political redistricting" by Jack Zhang, Hamidreza Validi, Austin Buchanan, and Illya V. Hicks.
+Code and data for the "Linear-size formulations for connected planar graph partitioning and political districting" by Jack Zhang, Hamidreza Validi, Austin Buchanan, and Illya V. Hicks.
 
 Motivated by applications in political redistricting, we propose a linear size and compact model for partitioning a planar graph into k partitions. 
 
