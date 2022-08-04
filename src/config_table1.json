@@ -1,0 +1,134 @@
+{
+    "run1": {
+        "state": "AL",
+        "model": "Williams",
+        "num_district": 7,
+	"warm_start": false
+    },
+    "run2": {
+        "state": "AR",
+        "model": "Williams",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run3": {
+        "state": "IA",
+        "model": "Williams",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run4": {
+        "state": "KS",
+        "model": "Williams",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run5": {
+        "state": "ME",
+        "model": "Williams",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run6": {
+        "state": "MS",
+        "model": "Williams",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run7": {
+        "state": "NE",
+        "model": "Williams",
+        "num_district": 3,
+	"warm_start": false
+    },
+    "run8": {
+        "state": "NM",
+        "model": "Williams",
+        "num_district": 3,
+	"warm_start": false
+    },
+    "run9": {
+        "state": "WV",
+        "model": "Williams",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run10": {
+        "state": "ID",
+        "model": "Williams",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run11": {
+        "state": "MT",
+        "model": "Williams",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run12": {
+        "state": "AL",
+        "model": "Hess",
+        "num_district": 7,
+	"warm_start": false
+    },
+    "run13": {
+        "state": "AR",
+        "model": "Hess",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run14": {
+        "state": "IA",
+        "model": "Hess",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run15": {
+        "state": "KS",
+        "model": "Hess",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run16": {
+        "state": "ME",
+        "model": "Hess",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run17": {
+        "state": "MS",
+        "model": "Hess",
+        "num_district": 4,
+	"warm_start": false
+    },
+    "run18": {
+        "state": "NE",
+        "model": "Hess",
+        "num_district": 3,
+	"warm_start": false
+    },
+    "run19": {
+        "state": "NM",
+        "model": "Hess",
+        "num_district": 3,
+	"warm_start": false
+    },
+    "run20": {
+        "state": "WV",
+        "model": "Hess",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run21": {
+        "state": "ID",
+        "model": "Hess",
+        "num_district": 2,
+	"warm_start": false
+    },
+    "run22": {
+        "state": "MT",
+        "model": "Hess",
+        "num_district": 2,
+	"warm_start": false
+    }
+}

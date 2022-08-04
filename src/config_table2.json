@@ -1,0 +1,156 @@
+{
+    "run1": {
+        "state": "AL",
+        "model": "Williams",
+        "num_district": 7,
+	"level": "county",
+	"warm_start": true
+    },
+    "run2": {
+        "state": "AR",
+        "model": "Williams",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run3": {
+        "state": "IA",
+        "model": "Williams",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run4": {
+        "state": "KS",
+        "model": "Williams",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run5": {
+        "state": "ME",
+        "model": "Williams",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run6": {
+        "state": "MS",
+        "model": "Williams",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run7": {
+        "state": "NE",
+        "model": "Williams",
+        "num_district": 3,
+	"level": "county",
+	"warm_start": true
+    },
+    "run8": {
+        "state": "NM",
+        "model": "Williams",
+        "num_district": 3,
+	"level": "county",
+	"warm_start": true
+    },
+    "run9": {
+        "state": "WV",
+        "model": "Williams",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run10": {
+        "state": "ID",
+        "model": "Williams",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run11": {
+        "state": "MT",
+        "model": "Williams",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run12": {
+        "state": "AL",
+        "model": "Hess",
+        "num_district": 7,
+	"level": "county",
+	"warm_start": true
+    },
+    "run13": {
+        "state": "AR",
+        "model": "Hess",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run14": {
+        "state": "IA",
+        "model": "Hess",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run15": {
+        "state": "KS",
+        "model": "Hess",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run16": {
+        "state": "ME",
+        "model": "Hess",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run17": {
+        "state": "MS",
+        "model": "Hess",
+        "num_district": 4,
+	"level": "county",
+	"warm_start": true
+    },
+    "run18": {
+        "state": "NE",
+        "model": "Hess",
+        "num_district": 3,
+	"level": "county",
+	"warm_start": true
+    },
+    "run19": {
+        "state": "NM",
+        "model": "Hess",
+        "num_district": 3,
+	"level": "county",
+	"warm_start": true
+    },
+    "run20": {
+        "state": "WV",
+        "model": "Hess",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run21": {
+        "state": "ID",
+        "model": "Hess",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    },
+    "run22": {
+        "state": "MT",
+        "model": "Hess",
+        "num_district": 2,
+	"level": "county",
+	"warm_start": true
+    }
+}
