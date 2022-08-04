@@ -70,7 +70,7 @@ Generally, each run should pick from the following options:
 * num_district
   * Either treat counties or census tracts as indivisible land units
 * warm_start : {true, false}
-  * If true, will use a warm start obtained from Hess or Williams' model
+  * If true, will use a warm start obtained from Hess or Williams model
   
 ## References
 In this repository, we employed parts of [this code](https://github.com/vrdi/NetworksWeek5/blob/master/PlanarEmbeddings/face_finder.py) and the following repository.
