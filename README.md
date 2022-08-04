@@ -66,7 +66,7 @@ Generally, each run should pick from the following options:
   * [See list of 2-letter codes](https://en.wikipedia.org/wiki/List_of_U.S._state_and_territory_abbreviations)
 * model : {Hess, Williams} 
   * Hess model uses binary variables x_ij that equal one when vertex i is assigned to the district rooted at vertex j
-  * Williams employs a linear-size and compact formulation for partitioning a state to districts. It uses flow to capture population balance and compactness,
+  * Williams employs a linear-size and compact formulation for partitioning a state into districts. It uses flow to capture population balance and compactness.
 * num_district
 * warm_start : {true, false}
   * If true, will use a warm start obtained from Hess or Williams model
