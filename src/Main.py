@@ -95,7 +95,8 @@ def export_to_png(m, assignment, filename):
     my_fig.set_size_inches(my_fig.get_size_inches() * RESIZE_FACTOR)
     plt.axis('off')
     my_fig.savefig(filename)
-
+    plt.close()
+    
 # prepare csv file by writing column headers
 with open(results_filename,'w', newline = '') as csvfile:   
     writer = csv.DictWriter(csvfile, fieldnames = fields)
