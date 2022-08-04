@@ -68,7 +68,6 @@ Generally, each run should pick from the following options:
   * Hess model uses binary variables x_ij that equal one when vertex i is assigned to the district rooted at vertex j
   * Williams employs a linear-size and compact formulation for partitioning a state to districts. It uses flow to capture population balance and compactness,
 * num_district
-  * Either treat counties or census tracts as indivisible land units
 * warm_start : {true, false}
   * If true, will use a warm start obtained from Hess or Williams model
   
