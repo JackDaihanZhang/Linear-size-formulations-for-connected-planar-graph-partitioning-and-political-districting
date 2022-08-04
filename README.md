@@ -30,7 +30,7 @@ The config file can specify a batch of runs. A particular run might look like th
 * state: AL
 * model: Williams
 * num_district: 7
-* warm start: false
+* warm_start: false
 
 The config.json file might look like this:
 ```
@@ -69,5 +69,5 @@ Generally, each run should pick from the following options:
   * Williams employs a linear-size and compact formulation for partitioning a state to districts. It uses flow to capture population balance and compactness,
 * num_district
   * Either treat counties or census tracts as indivisible land units
-* warm start : {true, false}
+* warm_start : {true, false}
   * If true, will use a warm start obtained from Hess or Williams' model
