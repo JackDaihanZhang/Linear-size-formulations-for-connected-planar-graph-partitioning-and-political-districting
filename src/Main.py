@@ -120,8 +120,6 @@ for key in batch_configs.keys():
     
     # Build the model
     m = gp.Model()
-    # Set a time limit
-    m.setParam('TimeLimit', 3600)
     # Set gap to zero
     m.setParam('MIPGap', 0)
     m.modelSense = GRB.MINIMIZE
