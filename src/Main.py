@@ -122,6 +122,10 @@ for key in batch_configs.keys():
     m = gp.Model()
     # Set gap to zero
     m.setParam('MIPGap', 0)
+    # Make tolerance tight
+    m.Params.IntFeasTol = 1.e-9
+    m.Params.FeasibilityTol = 1.e-9
+    
     m.modelSense = GRB.MINIMIZE
     total_pop = sum(p)
     L = math.ceil((total_pop/num_district)*(0.995))
