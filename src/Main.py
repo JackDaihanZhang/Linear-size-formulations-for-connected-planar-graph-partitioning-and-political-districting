@@ -29,7 +29,7 @@ if len(sys.argv)>1:
     #       python main.py usethisconfig.json 1>>log_file.txt 2>>error_file.txt
     config_filename = sys.argv[1] 
 else:
-    config_filename = 'config_tract.json' # default
+    config_filename = 'config.json' # default
     
 print("Here is the config name: ", config_filename)
 print("Reading config from", config_filename)
