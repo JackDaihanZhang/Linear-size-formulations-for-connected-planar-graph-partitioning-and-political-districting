@@ -51,7 +51,7 @@ The config.json file might look like this:
     "run14": { "state": "IA", "model": "Hess", "num_district": 4, "warm_start": false },
     "run15": { "state": "KS", "model": "Hess", "num_district": 4, "warm_start": false },
     "run16": { "state": "ME", "model": "Hess", "num_district": 2, "warm_start": false },
-    "run17": { "state": "MS", "model": "Hess", "num_district": 4,	"warm_start": false },
+    "run17": { "state": "MS", "model": "Hess", "num_district": 4, "warm_start": false },
     "run18": { "state": "NE", "model": "Hess", "num_district": 3, "warm_start": false },
     "run19": { "state": "NM", "model": "Hess", "num_district": 3, "warm_start": false },
     "run20": { "state": "WV", "model": "Hess", "num_district": 2, "warm_start": false },
