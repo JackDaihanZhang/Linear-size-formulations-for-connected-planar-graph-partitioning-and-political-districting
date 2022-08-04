@@ -28,7 +28,7 @@ C:\Linear-size-formulations-for-connected-planar-graph-partitioning-and-politica
 ## config.json
 The config file can specify a batch of runs. A particular run might look like this:
 * state: AL
-* model: Williams_flow
+* model: Williams
 * num_district: 7
 * warm start: false
 
