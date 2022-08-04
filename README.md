@@ -73,7 +73,7 @@ Generally, each run should pick from the following options:
   * If true, will use a warm start obtained from Hess or Williams model
   
 ## References
-In this repository, we employed parts of the code of [Lorenzo Najt and Daryl Deford](https://github.com/vrdi/NetworksWeek5/blob/master/PlanarEmbeddings/face_finder.py) and the following repository.
+In this repository, we employed parts of [Lorenzo Najt and Daryl Deford's code](https://github.com/vrdi/NetworksWeek5/blob/master/PlanarEmbeddings/face_finder.py) and the following repository.
 
 ```
 Validi, H., & Buchanan, A. (2022). Political districting to minimize cut edges (Version 0.0.1) [Computer software]. https://doi.org/10.5281/zenodo.6374373
