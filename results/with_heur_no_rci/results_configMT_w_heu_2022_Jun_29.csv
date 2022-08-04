@@ -1,5 +1,0 @@
-State,Level,Model,Primal Vertices,Edges,Districts,Number of Max Clique,Run Time (Seconds),Callback Time (Seconds),Time without Callbacks (Seconds),Branch and Bound Nodes,Number of Callbacks,Number of Lazy Constraints Added,Objective Value,Objective Bound,heur_obj,heur_time,heur_iter
-MT,tract,Hess,319,840,2,n/a,80.7229175567627,0,80.7229175567627,1.0,0,0,3577392.0,3577392.0,3581613,161.57,100
-MT,tract,Williams_flow,319,840,2,n/a,3600.2224082946777,0,3600.2224082946777,2078.0,0,0,3577391.9999993565,1688081.2206368905,3581613,161.57,100
-MT,county,Hess,56,138,2,n/a,0.5465641021728516,0,0.5465641021728516,1.0,0,0,1750471.0,1750471.0,1752398,11.93,100
-MT,county,Williams_flow,56,138,2,n/a,3.576019287109375,0,3.576019287109375,1672.0,0,0,1750470.9999999981,1750470.9999999981,1752398,11.93,100
