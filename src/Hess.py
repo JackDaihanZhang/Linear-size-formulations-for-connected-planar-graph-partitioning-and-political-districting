@@ -69,21 +69,12 @@ def Hess_model(m):
     add_shir_constraints(m)
     
     ####################################   
-    # Inject heuristic warm start
+    # Inject warm start
     ####################################    
-    if m._heuristic:
-        for district in m._hdistricts:    
-            H = G.subgraph(district)
-            min_score = nx.diameter(H) * max(m._p) * len(district)
-            min_root = -1
-            for vertex in H.nodes:
-                length, path = nx.single_source_dijkstra(H, vertex)
-                score = sum(length[node]*m._p[node] for node in H.nodes)
-                if score < min_score:
-                    min_score = score
-                    min_root = vertex
-            for i in district:
-                m._X[i, min_root].start = 1
+    if m._ws:
+        for center in m._partitions.keys():
+            for i in m._partitions[center]:
+                m._X[int(i), int(center)].start = 1
     m.update()
     m.optimize()
     run_time = m.Runtime
@@ -91,14 +82,15 @@ def Hess_model(m):
     # Print the solution if optimality if a feasible solution has been found
     if m.SolCount > 0:
         labels = [ j for j in DG.nodes if m._X[j, j].x > 0.5 ]
-        
-        districts = [ [ i for i in DG.nodes if m._X[i, j].x > 0.5 ] for j in labels]             
+        partitions_dict = {}
+        for j in labels:
+            partitions_dict[j] = [ i for i in DG.nodes if m._X[i, j].x > 0.5 ]            
         node_count = m.NodeCount
         obj_bound = m.ObjBound
         obj_val = m.objVal
     else:
         node_count = 0
-        districts = "N/A"
+        partitions_dict = "N/A"
         obj_val = "N/A"
         obj_bound = m.ObjBound
-    return [run_time, node_count, districts, obj_val, obj_bound]
+    return [run_time, node_count, partitions_dict, obj_val, obj_bound]

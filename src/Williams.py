@@ -3,9 +3,6 @@ from gurobipy import GRB
 import networkx as nx
 import face_finder
 import read
-import Population_cuts
-import RCI_cuts
-from itertools import combinations
 
 
 def Williams_model(m):
@@ -23,8 +20,7 @@ def Williams_model(m):
     # Construct the graphs from JSON file
     # If running on county level, use face_finder.py to construct the original dual
     # graph (dual_draw) and primal_dual_pairs
-    if m._level == "county":
-        primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw, df, m._state)[1]
+    primal_dual_pairs = face_finder.restricted_planar_dual(primal_draw, df, m._state)[1]
      
     # Obtain all necessary inputs for the model
     [primal_graph, dual_graph, primal_nodes, dual_nodes, primal_roots, dual_roots] = read.read_Williams(primal_dual_pairs)
@@ -65,9 +61,6 @@ def Williams_model(m):
     if is_population_considered and is_forest:
         add_population_constraints(m, primal_nodes, primal_graph, primal_edges, add_objective)
             
-    # Add max-clique constraints here:
-    if m._maxclique:
-        add_max_clique_constraints(m)
     
     # Optimize model
     m.optimize(m._callback)
@@ -90,9 +83,9 @@ def Williams_model(m):
                     forest_edges.append(forest_edge)
             directed_forest = nx.DiGraph()
             directed_forest.add_nodes_from(tree_nodes)
-            if m._level == "county":
-                for node in directed_forest.nodes():
-                    directed_forest.nodes[node]["pos"] = primal_draw.nodes[node]["pos"]
+            for node in directed_forest.nodes():
+                directed_forest.nodes[node]["pos"] = primal_draw.nodes[node]["pos"]
+            m._forestedges = forest_edges
             directed_forest.add_edges_from(forest_edges)
             forest = directed_forest.to_undirected()
             node_count = m.NodeCount
@@ -148,17 +141,25 @@ def subgraph_division(m, primal_graph, primal_nodes, primal_dual_pairs):
         m._s[j].BranchPriority = 1
         
     ####################################   
-    # Inject heuristic warm start
+    # Inject warm start
     ####################################    
-    if m._heuristic:
-        for cut_edge in m._cuts:
-            if cut_edge in m._primaledges:
-                index = m._primaledges.index(cut_edge)
+    if m._ws:
+        index_list = [i for i in range(len(m._primaledges))]
+        for edge in m._forest:
+            edge = [int(edge[0]), int(edge[1])]
+            if edge in m._primaledges:
+                index = m._primaledges.index(edge)
             else:
-                reversed_edge = [cut_edge[1], cut_edge[0]]
+                reversed_edge = [edge[1], edge[0]]
                 index = m._primaledges.index(reversed_edge)
-            m._x[index, cut_edge[0]].start = 0
-            m._x[index, cut_edge[1]].start = 0
+            m._x[index, edge[0]].start = 0
+            m._x[index, edge[1]].start = 1
+            index_list.remove(index)
+        for i in index_list:
+            edge = m._primaledges[i]
+            m._x[i, edge[0]].start = 0
+            m._x[i, edge[1]].start = 0
+        
         
     # Coupling constraints
     m.addConstrs(gp.quicksum(m._x[out_edge] for out_edge in primal_graph.out_edges(i))  <= gp.quicksum(m._w[out_edge]
@@ -187,103 +188,17 @@ def add_population_constraints(m, primal_nodes, primal_graph, primal_edges, add_
     #add variables: p is the population variable, g is the generated flow variable, and f is the arc flow variable
     m._g = m.addVars(primal_nodes, name = 'g')
     m._f = m.addVars(primal_graph.edges, name = 'f')
-    
-    if m._populationparam == "flow":      
-        ####################################   
-        # Inject heuristic warm start
-        ####################################   
-        if m._heuristic:
-            for district in m._hdistricts:                
-                H = m._primaldraw.subgraph(district)
-                min_score = nx.diameter(H) * max(m._p) * len(district)
-                min_root = -1
-                min_path = []
-                for vertex in H.nodes:
-                    length, path = nx.single_source_dijkstra(H, vertex)
-                    score = sum(length[node]*m._p[node] for node in H.nodes)
-                    if score < min_score:
-                        min_score = score
-                        min_root = vertex
-                        min_path = path
-                # warm start root var        
-                m._s[min_root].start = 1
-                
-                # warm start generated population
-                district_population = sum(m._p[i] for i in district)
-                m._g[min_root].start = district_population
-                
-                # warm start selected edges inside a district
-                for vertex in H.nodes:
-                    if vertex == min_root: continue
-                    current_path = min_path[vertex]
-                    for i in range(len(current_path)-1):
-                        current_node = current_path[i]
-                        next_node = current_path[i+1]
-                        edge = [current_node, next_node]
-                        opposite_edge = [next_node, current_node]
-                        if edge in m._primaledges:
-                            index = m._primaledges.index(edge)
-                        else:
-                            index =  m._primaledges.index(opposite_edge)
-                        m._x[index, next_node].start = 1
-                        m._x[index, current_node].start = 0
-                           
-        # Have the option to add an objective function
-        if add_objective:
-            m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))
-    
-        # add constraints
-        m.addConstrs(m._g[node] - m._s[node]*m._L >= 0 for node in primal_nodes)
-        m.addConstrs(m._g[node] - m._s[node]*m._U <= 0 for node in primal_nodes)
-        m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
-                      gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - m._p[node] == 0 for node in primal_nodes)
-        m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
-        
-        if m._RCI:
-            #tell Gurobi that we will be adding (lazy) constraints
-            m.Params.lazyConstraints = 1
+   
+    # Have the option to add an objective function
+    if add_objective:
+        m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))
 
-            # designate the callback routine 
-            m._callback = RCI_cuts.RCI_inequalities
-    
-    elif m._populationparam == "cuts":
-        if add_objective:
-            m.setObjective(gp.quicksum(m._f[edge] for edge in primal_graph.edges))   
-        
-        m.addConstrs(m._g[node] >= m._s[node]*m._L for node in primal_nodes)  
-    
-        m.addConstrs(m._g[node] <= m._s[node]*m._total_pop for node in primal_nodes)
-        
-        m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
-                     gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - m._p[node] == 0 for node in primal_nodes)
-        m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])        
-
-        #tell Gurobi that we will be adding (lazy) constraints
-        m.Params.lazyConstraints = 1
-
-        # designate the callback routine 
-        m._callback = Population_cuts.rounded_capacity_ineq
+    # add constraints
+    m.addConstrs(m._g[node] - m._s[node]*m._L >= 0 for node in primal_nodes)
+    m.addConstrs(m._g[node] - m._s[node]*m._U <= 0 for node in primal_nodes)
+    m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
+                  gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - m._p[node] == 0 for node in primal_nodes)
+    m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
            
-    m.update()
-    
-def add_max_clique_constraints(m):
-    G  = m._G
-    cliques = nx.find_cliques(G)
-    for clique in cliques:
-        if sum([m._p[i] for i in clique]) <= m._U:
-            continue
-        real_edges = combinations(clique, 2)
-        digraph_edges = []
-        # Convert the real-graph edges to the digraph representation used in the model
-        for real_edge in real_edges:
-            if list(real_edge) in m._primaledges:
-                index = m._primaledges.index(list(real_edge))
-            else:
-                reversed_edge = [real_edge[1], real_edge[0]]
-                index = m._primaledges.index(reversed_edge)
-            digraph_edges.append((index, real_edge[0]))
-            digraph_edges.append((index, real_edge[1]))
-        m.addConstr(gp.quicksum(m._x[e] for e in digraph_edges) <= len(clique) - 2)
-        m._numMaxClique += 1
     m.update()
     
