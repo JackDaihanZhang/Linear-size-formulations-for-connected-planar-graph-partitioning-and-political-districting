@@ -115,7 +115,6 @@ for key in batch_configs.keys():
      
     G =  Graph.from_json("../data/" + "dual_graphs/" + state  + "_counties.json")
     p = [G.nodes[i]['P0010001'] for i in G.nodes()]
-    primal_dual_pairs = 'n/a'
     df = gpd.read_file("../data/" + "shape_files/" + state + "_counties.shp")
     
     # Build the model
@@ -142,7 +141,6 @@ for key in batch_configs.keys():
     m._p = p
     m._G = G
     m._df = df
-    m._pdp = primal_dual_pairs
     m._k = num_district
     # read heuristic solution from an external file
     m._ws = warm_start

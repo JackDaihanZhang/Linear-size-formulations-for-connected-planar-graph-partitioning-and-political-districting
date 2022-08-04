@@ -16,7 +16,6 @@ def Williams_model(m):
     # Retrieve model inputs
     primal_draw = m._G
     df = m._df 
-    primal_dual_pairs = m._pdp
     # Construct the graphs from JSON file
     # If running on county level, use face_finder.py to construct the original dual
     # graph (dual_draw) and primal_dual_pairs
@@ -67,10 +66,6 @@ def Williams_model(m):
     run_time = m.Runtime
     # Print the solution if optimality if a feasible solution has been found
     if m.SolCount > 0:
-        spanning_tree_edges = []
-        for primal_edge in primal_graph.edges:
-            if m._w[primal_edge].X > 0.5:
-                spanning_tree_edges.append(tuple(primal_edges[primal_edge[0]]))
         # Construct the forest graph and obtain experiment result
         if is_forest == True:
             forest_edges = []
@@ -198,7 +193,7 @@ def add_population_constraints(m, primal_nodes, primal_graph, primal_edges, add_
     m.addConstrs(m._g[node] - m._s[node]*m._U <= 0 for node in primal_nodes)
     m.addConstrs(m._g[node] + gp.quicksum(m._f[predecessor, node] for predecessor in primal_graph.predecessors(node)) -
                   gp.quicksum(m._f[out_edge] for out_edge in out_edges[str(node)]) - m._p[node] == 0 for node in primal_nodes)
-    m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(head_node)]) for head_node in out_edges.keys() for edge in out_edges[head_node])
+    m.addConstrs(m._f[edge] <= m._x[edge] * (m._U - m._p[int(tail_node)]) for tail_node in out_edges.keys() for edge in out_edges[tail_node])
            
     m.update()
     
