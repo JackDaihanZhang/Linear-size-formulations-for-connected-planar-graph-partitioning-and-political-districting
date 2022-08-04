@@ -61,11 +61,6 @@ def append_dict_as_row(file_name, dict_of_elem, field_names):
         # Add dictionary as wor in the csv
         dict_writer.writerow(dict_of_elem)
 
-###########################
-# Hard-coded inputs
-###########################
-number_of_congressional_district = {"AL": 7, "AR": 4, "IA": 4, "KS": 4, "ME": 2, "MS": 4, "NE": 3, "NM": 3, "WV": 2, "ID": 2, "MT": 2, "NH": 2}
-
 #########################################
 # Run An Instance using Williams' model
 #########################################
@@ -206,7 +201,7 @@ for key in batch_configs.keys():
         json.dump(data, outfile)
     
     # Output districting figures if feasible solutions are found within the givn time limit
-    if node_count > 0:
+    if m.solCount > 0:
         assignment = [ -1 for u in G.nodes ]
         if model =="Williams":
             components = sorted(list(nx.connected_components(forest)))
