@@ -178,10 +178,10 @@ for key in batch_configs.keys():
     result['Primal Vertices'] = len(G.nodes)
     result['Edges'] = len(G.edges)
     result['Districts'] = m._k
-    result['Run Time (Seconds)'] = round(run_time,2)
-    result['Branch and Bound Nodes'] = int(node_count)
-    result['Objective Value'] = int(round(obj_val,0))
-    result['Objective Bound'] = int(round(obj_bound,0))
+    result['Run Time (Seconds)'] = '{0:.2f}'.format(run_time)
+    result['Branch and Bound Nodes'] = '{0:.0f}'.format(node_count)
+    result['Objective Value'] = '{0:.0f}'.format(obj_val) 
+    result['Objective Bound'] = '{0:.0f}'.format(obj_bound) 
     append_dict_as_row(results_filename, result, fields)
     
     # Create the json file for optimal solutions
