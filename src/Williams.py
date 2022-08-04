@@ -43,10 +43,10 @@ def Williams_model(m):
     primal_root = primal_roots[0]
 
     # Create decision variables w
-    m._w = m.addVars(primal_graph.edges, vtype = GRB.BINARY, name = "w")
+    m._w = m.addVars(primal_graph.edges, name = "w")
 
     # Create decision variables w_prime
-    m._w_prime = m.addVars(dual_graph.edges, vtype = GRB.BINARY, name = "w_prime")
+    m._w_prime = m.addVars(dual_graph.edges, name = "w_prime")
 
     add_regular_constraints(m, primal_dual_pairs, primal_graph, primal_nodes, primal_root, dual_graph, dual_nodes, dual_root)
 
@@ -132,7 +132,7 @@ def subgraph_division(m, primal_graph, primal_nodes, primal_dual_pairs):
     # Create variables for the selected edges in forest
     m._x = m.addVars(primal_graph.edges, vtype = GRB.BINARY, name= "x")
     # Create root variables
-    m._s = m.addVars(primal_nodes, name= "s")
+    m._s = m.addVars(primal_nodes, vtype = GRB.BINARY, name= "s")
     
     m._primalnodes = primal_nodes
     
