@@ -1,0 +1,33 @@
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
+C:\Users\hvalidi\OneDrive - Texas Tech University\Documents\GitHub\Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting\src\face_finder.py:194: UserWarning: Geometry is in a geographic CRS. Results from 'centroid' are likely incorrect. Use 'GeoSeries.to_crs()' to re-project geometries to a projected CRS before this operation.
+
+  centroids = df.centroid
