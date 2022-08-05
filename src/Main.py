@@ -95,6 +95,7 @@ def export_to_png(m, assignment, filename):
     my_fig.set_size_inches(my_fig.get_size_inches() * RESIZE_FACTOR)
     plt.axis('off')
     my_fig.savefig(filename)
+    plt.rcParams.update({'figure.max_open_warning': 0})
     
 # prepare csv file by writing column headers
 with open(results_filename,'w', newline = '') as csvfile:   
