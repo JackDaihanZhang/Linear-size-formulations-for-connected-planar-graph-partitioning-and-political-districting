@@ -157,6 +157,11 @@ def subgraph_division(m, primal_graph, primal_nodes, primal_dual_pairs):
         
         
     # Coupling constraints
+    #   We note that primal_graph is constructed as follows. For every set of crossing primal
+    #   and dual edges, we consider an index from 0 to the total number of edges minus one. 
+    #   Consider the 3rd index in the list with primal endpoints 4 and 5. Then, its corresponding  
+    #   directed edges in the primal_graph are defined as [3, "4"] and [3, "5"]. Moreover,  
+    #   if we call primal_graph.out_edges(3), it will return [[3,"4"], [3, "5"]]).  
     m.addConstrs(gp.quicksum(m._x[out_edge] for out_edge in primal_graph.out_edges(i))  <= gp.quicksum(m._w[out_edge]
                                             for out_edge in primal_graph.out_edges(i)) for i in range(len(primal_dual_pairs)))
     # Set number of roots to k
