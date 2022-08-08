@@ -1,6 +1,6 @@
 # Linear-size formulations for connected planar graph partitioning and political districting
 
-Code and data for the "Linear-size formulations for connected planar graph partitioning and political districting" by Jack Zhang, Hamidreza Validi, Austin Buchanan, and Illya V. Hicks.
+Code and data for the "Linear-size formulations for connected planar graph partitioning and political districting" (https://optimization-online.org/wp-content/uploads/2022/08/Linear-size-formulations-for-connected-planar-graph-partitioning-and-political-districting.pdf) by Jack Zhang, Hamidreza Validi, Austin Buchanan, and Illya V. Hicks.
 
 Motivated by applications in political redistricting, we propose a linear size and compact model for partitioning a planar graph into k partitions. 
 
